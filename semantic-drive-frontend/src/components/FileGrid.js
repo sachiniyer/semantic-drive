@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
-import Grid from '@mui/material/Unstable_Grid2';
-import MediaCard from '@/components/MediaCard';
+import * as React from "react";
+import { useState, useEffect } from "react";
+import Grid from "@mui/material/Unstable_Grid2";
+import MediaCard from "@/components/MediaCard";
 
 export default function FileGrid({ files, displayFile }) {
   let [items, setItems] = useState([]);
   useEffect(() => {
-    let newItems = []
+    let newItems = [];
     for (let f of files) {
       // fetch('/api/files')
       //  .then(response => response.json())
@@ -20,8 +20,7 @@ export default function FileGrid({ files, displayFile }) {
       //    </grid>
       // ));
       newItems.push(
-        <Grid
-          key={f}>
+        <Grid key={f}>
           <MediaCard
             image="https://source.unsplash.com/random"
             heading="cmyk"
@@ -29,21 +28,23 @@ export default function FileGrid({ files, displayFile }) {
             id={f}
             displayFile={displayFile}
           />
-        </Grid>
-      )
+        </Grid>,
+      );
     }
-    setItems(newItems)
+    setItems(newItems);
   }, [files]);
   return (
-    <Grid container spacing={3}
+    <Grid
+      container
+      spacing={3}
       sx={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'left',
-        alignItems: 'center',
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "left",
+        alignItems: "center",
       }}
     >
       {items}
     </Grid>
-  )
+  );
 }

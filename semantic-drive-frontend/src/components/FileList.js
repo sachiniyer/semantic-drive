@@ -1,13 +1,13 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
-import { List } from '@mui/material';
-import ListCard from '@/components/ListCard'
+import * as React from "react";
+import { useState, useEffect } from "react";
+import { List } from "@mui/material";
+import ListCard from "@/components/ListCard";
 
 export default function FileList({ files, displayFile }) {
   let [items, setItems] = useState([]);
 
   useEffect(() => {
-    let newitems = []
+    let newitems = [];
     for (let f of files) {
       // fetch('/api/files')
       //  .then(response => response.json())
@@ -29,15 +29,11 @@ export default function FileList({ files, displayFile }) {
           text="the cmyk color model (also known as process color, or four color) is a subtractive color model, based on the cmy color model, used in color printing, and is also used to describe the printing process itself."
           id={f}
           displayFile={displayFile}
-        />
-      )
+        />,
+      );
     }
-    setItems(newitems)
+    setItems(newitems);
   }, [files]);
 
-  return (
-    <List>
-      {items}
-    </List>
-  );
+  return <List>{items}</List>;
 }

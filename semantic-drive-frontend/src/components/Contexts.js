@@ -1,16 +1,16 @@
-'use client'
-import * as React from 'react';
-import { createContext } from 'react';
-import { useState } from 'react'
+"use client";
+import * as React from "react";
+import { createContext } from "react";
+import { useState } from "react";
 
 export const LayoutContext = createContext();
 
 export function LayoutRegistry({ children }) {
-  let [layout, setLayout] = useState('grid');
+  let [layout, setLayout] = useState("grid");
   return (
     <LayoutContext.Provider value={[layout, setLayout]}>
       {children}
-    </LayoutContext.Provider >
+    </LayoutContext.Provider>
   );
 }
 
@@ -20,6 +20,6 @@ export function FilesRegistry({ children }) {
   return (
     <FilesContext.Provider value={[files, setFiles]}>
       {children}
-    </FilesContext.Provider >
+    </FilesContext.Provider>
   );
 }
