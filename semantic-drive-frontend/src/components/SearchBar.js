@@ -14,7 +14,7 @@ import { LayoutContext } from '@/components/Contexts'
 import { useContext } from 'react';
 
 
-export default function SearchBar() {
+export default function SearchBar({ drawerWidth }) {
   let [layout, setLayout] = useContext(LayoutContext);
 
   function changeOrderType() {
@@ -38,10 +38,10 @@ export default function SearchBar() {
     <AppBar position="fixed" sx={{ zIndex: 2000 }}>
       <Toolbar sx={{ backgroundColor: 'background.paper' }}>
         <DashboardIcon sx={{ color: '#444', mr: 2, transform: 'translateY(-2px)' }} />
-        <Typography variant="h6" noWrap component="div">
+        <Typography variant="h6" noWrap component="div" sx={{ pr: 5 }}>
           Semantic Drive
         </Typography>
-        <Divider sx={{ height: 28, ml: 5, mr: 2 }} orientation="vertical" />
+        <Divider sx={{ height: 28, mr: 2 }} orientation="vertical" />
         <InputBase
           sx={{ ml: 1, flex: 1 }}
           placeholder="Search Drive"

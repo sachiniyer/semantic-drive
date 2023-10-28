@@ -1,35 +1,18 @@
 import * as React from 'react';
-import Link from 'next/link';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Divider from '@mui/material/Divider';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import HomeIcon from '@mui/icons-material/Home';
-import StarIcon from '@mui/icons-material/Star';
-import SettingsIcon from '@mui/icons-material/Settings';
 import ThemeRegistry from '@/components/ThemeRegistry/ThemeRegistry';
 import SearchBar from '@/components/SearchBar'
 import { LayoutRegistry, FilesRegistry } from '@/components/Contexts'
+import LeftBar from '@/components/LeftBar'
 
 export const metadata = {
   title: 'Semantic Drive',
   description: 'Semantic Drive',
 };
 
-const DRAWER_WIDTH = 240;
-
-const LINKS = [
-  { text: 'Home', href: '/', icon: HomeIcon },
-  { text: 'Starred', href: '/starred', icon: StarIcon },
-];
-
-const PLACEHOLDER_LINKS = [
-  { text: 'Settings', icon: SettingsIcon },
-];
+export const DRAWER_WIDTH = 240;
 
 
 export default function RootLayout({ children }) {
@@ -54,33 +37,9 @@ export default function RootLayout({ children }) {
                 variant="permanent"
                 anchor="left"
               >
-                <SearchBar />
+                <SearchBar drawerWidth={DRAWER_WIDTH} />
                 <Divider />
-                <List>
-                  {LINKS.map(({ text, href, icon: Icon }) => (
-                    <ListItem key={href} disablePadding>
-                      <ListItemButton component={Link} href={href}>
-                        <ListItemIcon>
-                          <Icon />
-                        </ListItemIcon>
-                        <ListItemText primary={text} />
-                      </ListItemButton>
-                    </ListItem>
-                  ))}
-                </List>
-                <Divider sx={{ mt: 'auto' }} />
-                <List>
-                  {PLACEHOLDER_LINKS.map(({ text, icon: Icon }) => (
-                    <ListItem key={text} disablePadding>
-                      <ListItemButton>
-                        <ListItemIcon>
-                          <Icon />
-                        </ListItemIcon>
-                        <ListItemText primary={text} />
-                      </ListItemButton>
-                    </ListItem>
-                  ))}
-                </List>
+                <LeftBar />
               </Drawer>
               <Box
                 component="main"
