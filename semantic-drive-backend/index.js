@@ -4,7 +4,7 @@ const httpErrors = require('http-errors')
 const pino = require('pino')
 const pinoHttp = require('pino-http')
 
-module.exports = function main (options, cb) {
+function main (options, cb) {
   // Set default options
   const ready = cb || function () {}
   const opts = Object.assign({
@@ -53,7 +53,7 @@ module.exports = function main (options, cb) {
   // Alternativly, you could setup external log handling for startup
   // errors and handle them outside the node process.  I find this is
   // better because it works out of the box even in local development.
-  require('./routes')(app, opts)
+  require('./app+routes')(app, opts)
 
   // Common error handlers
   app.use(function fourOhFourHandler (req, res, next) {
@@ -89,3 +89,7 @@ module.exports = function main (options, cb) {
   })
 }
 
+main({'port':3000}, function (err, app, server) {
+  if (err) throw err
+  console.log('Server started successfully!')
+})
