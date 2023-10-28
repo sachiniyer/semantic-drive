@@ -1,24 +1,35 @@
-# POST file
+# API Route
+
+## POST file
 
 Req - {uploadTime: utcdate, fileType: string, fileName: string, file: [byte]}
 Res - {fileId: string}
 
-# GET file
+## GET file
 
 Req - {fileId: string}
-Res - {uploadTime: utcdate, fileType: string, fileName: string, file: [byte]}
+Res - {uploadTime: utcdate, fileType: string, fileName: string, file: [byte], summary: string}
 
-# GET files
+## GET files
 
 Req - {}
 Res - {fileIds: [string]}
 
-# GET search
+## GET search
 
 Req - {terms: [string]}
 Res - {fileIds: [string]}
 
-## filetype
+### filetype
 
 - text
 - image
+
+# DB Schema
+
+uploadTime: utcdate,
+fileType: string,
+fileName: string,
+fileData: Blob,
+fileTest: string,
+mindsSummary: string,
