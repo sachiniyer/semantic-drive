@@ -5,6 +5,11 @@
 Req - {uploadTime: utcdate, fileType: string, fileName: string, file: [byte]}
 Res - {fileId: string}
 
+## DELETE file
+
+Req - {fileId: string}
+Res - {}
+
 ## GET file
 
 Req - {fileId: string}
@@ -26,10 +31,10 @@ Res - {fileIds: [string]}
 - image
 
 # DB Schema
-
-uploadTime: utcdate,
-fileType: string,
-fileName: string,
-fileData: Blob,
-fileTest: string,
-mindsSummary: string,
+id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  uploadTime VARCHAR(50),
+  fileType VARCHAR(50),
+  fileName VARCHAR(300),
+  fileData BYTEA, -- Assuming you're using PostgreSQL and Blob type is represented as BYTEA
+  fileTest VARCHAR(50),
+  mindsSummary VARCHAR(50)
