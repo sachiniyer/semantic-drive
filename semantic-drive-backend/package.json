@@ -2,7 +2,6 @@
   "name": "semantic-drive-backend",
   "version": "1.0.0",
   "description": "",
-  "author": "Sachin Iyer <sachinjiyer@gmail.com>",
   "keywords": [],
   "license": "ISC",
   "main": "index.js",
