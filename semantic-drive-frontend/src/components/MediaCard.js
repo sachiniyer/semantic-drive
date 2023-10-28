@@ -9,7 +9,9 @@ export default function MediaCard({ image, heading, text, id, displayFile }) {
     displayFile(id)
   }
   return (
-    <Card>
+    <Card sx={{
+      maxWidth: 345,
+    }}>
       <CardActionArea onClick={handleClick}>
         <CardMedia
           component="img"

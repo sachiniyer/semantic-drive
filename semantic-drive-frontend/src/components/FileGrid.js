@@ -21,7 +21,6 @@ export default function FileGrid({ files, displayFile }) {
       // ));
       newItems.push(
         <Grid
-          xs={6}
           key={f}>
           <MediaCard
             image="https://source.unsplash.com/random"
@@ -36,7 +35,14 @@ export default function FileGrid({ files, displayFile }) {
     setItems(newItems)
   }, [files]);
   return (
-    <Grid container rowSpacing={3} columnSpacing={3}>
+    <Grid container spacing={3}
+      sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'left',
+        alignItems: 'center',
+      }}
+    >
       {items}
     </Grid>
   )
