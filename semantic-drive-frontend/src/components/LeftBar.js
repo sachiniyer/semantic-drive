@@ -29,10 +29,14 @@ export default function LeftBar() {
     link.click();
   }
 
-  function uploadButton() {
-    let file = window.showOpenFilePicker().
-      then(fileHandle => fileHandle.getFile());
-    let fileData = file.arrayBuffer()
+  async function print(file) {
+    console.log(await file)
+  }
+
+  async function uploadButton() {
+    let file = await window.showOpenFilePicker()
+    let actualFile = await file[0].getFile()
+    let fileData = actualFile.arrayBuffer()
     let fileName = file.name
     let fileId = uploadFile(fileData, fileName);
     setFiles(files.push(fileId))
