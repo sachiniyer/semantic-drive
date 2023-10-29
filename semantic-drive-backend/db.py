@@ -3,7 +3,7 @@ from psycopg2.errors import SerializationFailure
 
 import logging
 
-conn = psycopg2.connect("postgresql://brayton:tvwWqV1_ccz5DB6dyfX_lg@arid-molerat-6026.g8z.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full&sslrootcert=/Users/brayton/.postgresql/root.crt")
+conn = psycopg2.connect("postgresql://brayton:tvwWqV1_ccz5DB6dyfX_lg@arid-molerat-6026.g8z.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full&sslrootcert=root.crt")
 
 def info():
     with conn.cursor() as cur:
