@@ -16,7 +16,6 @@ def info():
                     fileType     VARCHAR(50),
                     fileName     VARCHAR(300),
                     fileURL      VARCHAR(200),
-                    fileText     VARCHAR(65534) NULL,
                     mindsSummary VARCHAR(5000)
                     );
                     ''')
@@ -29,10 +28,9 @@ def insert_file(entry):
      # if entry has a key called fileText, then keep it otherwise it is "NULL"
      with conn.cursor() as cur:
         cur.execute(
-          (f"UPSERT INTO db (id, uploadTime, fileType, fileName, fileURL, fileText, fileImage, "
-           f"fileAudio, fileVideo, mindsSummary)"
+          (f"UPSERT INTO db (id, uploadTime, fileType, fileName, fileURL, mindsSummary)"
            f" VALUES ('{entry['id']}','{entry['uploadTime']}','{entry['fileType']}','{entry['fileName']}',"
-           f"'{entry['fileURL']}', {entry['fileText']}, '{entry['mindsSummary']}')"))
+           f"'{entry['fileURL']}', '{entry['mindsSummary']}')"))
         logging.debug("create_accounts(): status message: %s",
                       cur.statusmessage)
      conn.commit()
@@ -87,3 +85,4 @@ def delete_all():
         logging.debug("create_accounts(): status message: %s",
                       cur.statusmessage)
      conn.commit()
+     info()

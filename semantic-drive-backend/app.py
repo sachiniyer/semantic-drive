@@ -8,10 +8,6 @@ import requests
 import os
 from dotenv import load_dotenv
 
-class FileType(Enum):
-    image = "image"
-    text = "text"
-
 app = flask.Flask(__name__)
 
 # / route with 200 OK response
@@ -32,6 +28,7 @@ def download_file(id, file):
 def file():
     if flask.request.method == 'GET':
         response = find_file(flask.request.form['fileId'])
+        print(response)
         return json.dumps({
             "uploadTime": response[1],
             "fileType": response[2],
@@ -46,17 +43,12 @@ def file():
         fileData = flask.request.form['file']
 
         # parse the fileArg depending on fileType
-        fileText = "NULL"
         download_file(id, fileData)
         url = "/localfile?fileId=" + str(id)
-        if fileType == FileType.text:
-            fileText = fileData
-
         mindsSummary = ""
         entry = {'id': id, 'uploadTime': uploadTime,
                  'fileType': fileType, 'fileName': fileName,
-                 'fileURL': url, 'fileText': fileText,
-                 'mindsSummary': mindsSummary}
+                 'fileURL': url, 'mindsSummary': mindsSummary}
         insert_file(entry)
 
         # return the file id of the newly added file
