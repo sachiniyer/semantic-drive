@@ -1,6 +1,6 @@
 "use client"
 import { useContext } from "react";
-import { FileIdContext } from "@/components/Contexts";
+import { FileIdContext, FilesContext } from "@/components/Contexts";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -12,21 +12,38 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import DeleteIcon from '@mui/icons-material/Delete'
 import Divider from "@mui/material/Divider";
+import { FilesContext } from "@/components/Contexts";
+import { uploadFile, downloadFile, deleteFile, getFiles } from '@/components/Api'
 
 export default function LeftBar() {
-  let [fileId, _] = useContext(FileIdContext);
+  let [files, setFiles] = useContext(FilesContext);
+  let [fileId, _setFileId] = useContext(FileIdContext);
   function homeButton() {
-    console.log(fileId)
+    setFiles(getFiles())
   }
+
   function downloadButton() {
-    console.log(fileId)
+    let file = new Blob(downloadFile(fileId))
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(file.fileData);
+    link.download = file.fileName;
+    link.click();
   }
+
   function uploadButton() {
-    console.log(fileId)
+    let file = window.showOpenFilePicker().
+      then(fileHandle => fileHandle.getFile());
+    let fileData = file.arrayBuffer()
+    let fileName = file.name
+    let fileId = uploadFile(fileData, fileName);
+    setFiles(files.push(fileId))
   }
+
   function deleteButton() {
-    console.log(fileId)
+    deleteFile(fileId)
+    setFiles(files.filter((f) => f != fileId))
   }
+
   return (
     <>
       <List>
