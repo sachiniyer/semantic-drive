@@ -45,6 +45,7 @@ export default function HomePage() {
         body: formData
       }).then(response => response.json())
         .then(data => {
+          console.log(data);
           setDisplayFileContent(
             <Drawer
               sx={{
@@ -67,7 +68,13 @@ export default function HomePage() {
               <List sx={{ px: 2 }}>
                 <ListItem disablePadding>
                   <Typography variant="overline" sx={{ fontWeight: 500 }}>
-                    On this page {data.fileName}
+                    <h3> Metadata: </h3>
+                    <ul>
+                      <li> File Name: {data.fileName} </li>
+                      <li> File Type: {data.fileType} </li>
+                      <li> Upload Time: {data.uploadTime} </li>
+                      <li> Summary: {data.summary} </li>
+                    </ul>
                   </Typography>
                 </ListItem>
               </List>
