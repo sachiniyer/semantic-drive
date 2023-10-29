@@ -38,41 +38,43 @@ export default function HomePage() {
       setFileId(0);
     } else {
       setFileId(newId);
+      const formData = new FormData();
+      formData.append("fileId", newId);
       fetch(`${API}/file`, {
-          method: "POST",
-          body: JSON.stringify({ fileId: newId }),
+        method: "POST",
+        body: formData
       }).then(response => response.json())
         .then(data => {
-      setDisplayFileContent(
-        <Drawer
-          sx={{
-            width: 320,
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
-              width: 320,
-              boxSizing: "border-box",
-              top: ["48px", "56px", "64px"],
-              height: "auto",
-              bottom: 0,
-            },
-          }}
-          elevation={0}
-          open={true}
-          variant="permanent"
-          anchor="right"
-        >
-          <Button onClick={closeDisplayFile}>Close</Button>
-          <List sx={{ px: 2 }}>
-            <ListItem disablePadding>
-              <Typography variant="overline" sx={{ fontWeight: 500 }}>
-                On this page {newId}
-              </Typography>
-            </ListItem>
-          </List>
-        </Drawer>,
+          setDisplayFileContent(
+            <Drawer
+              sx={{
+                width: 320,
+                flexShrink: 0,
+                "& .MuiDrawer-paper": {
+                  width: 320,
+                  boxSizing: "border-box",
+                  top: ["48px", "56px", "64px"],
+                  height: "auto",
+                  bottom: 0,
+                },
+              }}
+              elevation={0}
+              open={true}
+              variant="permanent"
+              anchor="right"
+            >
+              <Button onClick={closeDisplayFile}>Close</Button>
+              <List sx={{ px: 2 }}>
+                <ListItem disablePadding>
+                  <Typography variant="overline" sx={{ fontWeight: 500 }}>
+                    On this page {data.fileName}
+                  </Typography>
+                </ListItem>
+              </List>
+            </Drawer>,
 
           )
-      );
+        });
     }
   }, [newId, displayFile]);
 

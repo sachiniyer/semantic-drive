@@ -10,11 +10,12 @@ import SearchIcon from "@mui/icons-material/Search";
 import ReorderIcon from "@mui/icons-material/Reorder";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import Divider from "@mui/material/Divider";
-import { LayoutContext } from "@/components/Contexts";
+import { LayoutContext, FilesContext } from "@/components/Contexts";
 import { useContext } from "react";
 
 export default function SearchBar({ drawerWidth }) {
   let [layout, setLayout] = useContext(LayoutContext);
+  let [_, setFiles] = useContext(FilesContext);
 
   function changeOrderType() {
     if (layout == "grid") {
