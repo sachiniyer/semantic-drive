@@ -16,7 +16,9 @@ def summarize(id, fileType, url):
         return captioner_text[0]['generated_text']
     if fileType == 'audio':
         pipe = pipeline("automatic-speech-recognition", "openai/whisper-large-v2")
-        sum_text = pipe(f"files/{id}")
-        return sum_text['text']
+        ext_text = pipe(f"files/{id}")['text']
+        summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+        summarizer_text = summarizer(ext_text, max_length=100, do_sample=False)
+        return summarizer_text[0]['summary_text']
     if fileType == 'video':
         pass
