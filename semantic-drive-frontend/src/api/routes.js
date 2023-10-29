@@ -41,6 +41,8 @@
  *   mindsSummary VARCHAR(50)
  */
 
+const SERVER_URL = 'http://localhost:8000'; 
+
 let IMG_EXTENSIONS = ['jpg', 'png', 'tiff', 'gif', 'bmp', 'jpeg', 'webp'];
 let AUDIO_EXTENSION = ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac', 'opus', 'wma', 'aiff', 'alac'];
 let MOV_EXTENSIONS = ['mp4', 'mov', 'wmv', 'flv', 'avi', 'avchd', 'webm', 'mkv', 'm4v', '3gp', '3g2'];
@@ -62,7 +64,7 @@ export function uploadFile(fileName, file) {
   else {
     fileType = 'text';
   }
-  fetch('/file', {
+  fetch(`${SERVER_URL}/file`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -74,7 +76,7 @@ export function uploadFile(fileName, file) {
 }
 
 export function downloadFile(fileId) {
-  fetch('/file', {
+  fetch(`${SERVER_URL}/file`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -91,7 +93,7 @@ export function downloadFile(fileId) {
 }
 
 export function metaFile(fileId) {
-  fetch('/file', {
+  fetch(`${SERVER_URL}/file`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -110,7 +112,7 @@ export function metaFile(fileId) {
 }
 
 export function deleteFile(fileId) {
-  fetch('/file', {
+  fetch(`${SERVER_URL}/file`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'
@@ -122,7 +124,7 @@ export function deleteFile(fileId) {
 }
 
 export function getFiles() {
-  fetch('/files', {
+  fetch(`${SERVER_URL}/files`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -134,7 +136,7 @@ export function getFiles() {
 }
 
 export function searchFiles(terms) {
-  fetch('/search', {
+  fetch(`${SERVER_URL}/search`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
