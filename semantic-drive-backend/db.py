@@ -10,11 +10,14 @@ def info():
         cur.execute('''
                     CREATE TABLE IF NOT EXISTS db (
                     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                    uploadTime VARCHAR(50),
-                    fileType VARCHAR(50),
-                    fileName VARCHAR(300),
-                    fileData BYTEA, -- Assuming you're using PostgreSQL and Blob type is represented as BYTEA
-                    fileText VARCHAR(5000),
+                    uploadTime   VARCHAR(50),
+                    fileType     VARCHAR(50),
+                    fileName     VARCHAR(300),
+                    fileURL      VARCHAR(200),
+                    fileText     VARCHAR(65534) NULL,
+                    fileImage    BYTEA NULL,
+                    fileAudio    BYTEA NULL,
+                    fileVideo    BYTEA NULL,
                     mindsSummary VARCHAR(5000)
                     );
                     ''')
@@ -26,10 +29,12 @@ info()
 def insert_file(entry):
      with conn.cursor() as cur:
         cur.execute(
-          f"UPSERT INTO db (id, uploadTime, fileType, fileName, fileData, fileText, mindsSummary) VALUES ('{entry['id']}','{entry['uploadTime']}','{entry['fileType']}','{entry['fileName']}','{entry['fileData']}', '{entry['fileText']}', '{entry['mindsSummary']}')")
+          (f"UPSERT INTO db (id, uploadTime, fileType, fileName, fileURL, fileText, fileImage, "
+           f"fileAudio, fileVideo, mindsSummary)"
+           f" VALUES ('{entry['id']}','{entry['uploadTime']}','{entry['fileType']}','{entry['fileName']}',"
+           f"'{entry['fileURL']}', NULL, NULL, NULL, NULL, '{entry['mindsSummary']}')"))
         logging.debug("create_accounts(): status message: %s",
                       cur.statusmessage)
-
      conn.commit()
 
 def file_ids():
@@ -63,7 +68,7 @@ def delete_file(id):
 def delete_all():
      with conn.cursor() as cur:
         cur.execute(
-             f"DELETE * FROM db"),
+             f"DROP TABLE IF EXISTS db"),
         logging.debug("create_accounts(): status message: %s",
                       cur.statusmessage)
      conn.commit()
