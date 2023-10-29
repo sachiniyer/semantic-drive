@@ -51,9 +51,11 @@ const DocumentFiles = sequelize.define("documentFiles", {
         type: Sequelize.STRING, // Change to STRING for 'str'
     },
     tags: {
-        type: Sequelize.STRING, // Change to STRING for 'str'
+        type: Sequelize.TEXT,
     },
 });
+
+sequelize.drop()
 
 const ImageFile = sequelize.define("ImageFile", {
     id: {
@@ -113,7 +115,39 @@ const testDocument = {
     dataAccessed: new Date(), // Replace with the desired date
     authorCreator: 'Test Author',
     subject: 'Test Subject',
-    tags: 'Tag1,Tag2', // Replace with desired tags
+    tags: `
+    Introduction to MindsDB
+MindsDB is an AI Automation platform for building AI/ML powered features and applications. It works by connecting any source of data with any AI/ML model or framework and automating how real-time data flows between them.
+
+MindsDB allows you to easily:
+
+Connect to any store of data or end-user application.
+Pass data to an AI model from any store of data or end-user application.
+Plug the output of an AI model into any store of data or end-user application.
+Fully automate these workflows to build AI-powered features and applications.
+What is MindsDB
+
+​
+Build with MindsDB
+As you can connect any data source with any AI/ML model, you can build and automate any AI/ML use case.
+
+Here are some AI/LLM use cases:
+
+Semantic Search and Q&A/RAG
+Chatbots
+Classification
+Sentiment Analysis
+Summarisation
+Translation
+You can use MindsDB for the following machine learning use cases:
+
+Forecasting
+Classification
+Regression
+Anomaly Detection
+Recommenders
+You can use one of MindsDB’s AutoMLs or you can bring your own, pre-trained model
+`
 };
 
 // Create a test image
