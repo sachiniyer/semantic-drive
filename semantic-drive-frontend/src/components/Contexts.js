@@ -23,3 +23,13 @@ export function FilesRegistry({ children }) {
     </FilesContext.Provider>
   );
 }
+
+export const FileIdContext = createContext();
+export function FileIdRegistry({ children }) {
+  let [fileId, setFileId] = useState(0);
+  return (
+    <FileIdContext.Provider value={[fileId, setFileId]}>
+      {children}
+    </FileIdContext.Provider>
+  );
+}

@@ -9,11 +9,12 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import FileGrid from "@/components/FileGrid";
 import FileList from "@/components/FileList";
-import { LayoutContext, FilesContext } from "@/components/Contexts";
+import { LayoutContext, FilesContext, FileIdContext } from "@/components/Contexts";
 
 export default function HomePage() {
-  let [layout, _] = useContext(LayoutContext);
+  let [layout, _setLayout] = useContext(LayoutContext);
   let [files, setFiles] = useContext(FilesContext);
+  let [_fileId, setFileId] = useContext(FileIdContext);
   let [newId, setNewId] = useState(0);
   let [displayFile, setDisplayFile] = useState(false);
   let [displayFileContent, setDisplayFileContent] = useState(<></>);
@@ -32,7 +33,9 @@ export default function HomePage() {
   useEffect(() => {
     if (displayFile == false) {
       setDisplayFileContent(<></>);
+      setFileId(0);
     } else {
+      setFileId(newId);
       setDisplayFileContent(
         <Drawer
           sx={{
@@ -62,7 +65,7 @@ export default function HomePage() {
         </Drawer>,
       );
     }
-  }, [displayFile]);
+  }, [newId, displayFile]);
 
   function changeDisplayFile(id) {
     setNewId(id);
