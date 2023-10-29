@@ -1,5 +1,5 @@
 "use client"
-import {useContext, useRef, useState} from "react";
+import { useContext, useRef, useState } from "react";
 import { FileIdContext, FilesContext } from "@/components/Contexts";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -13,7 +13,8 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import DeleteIcon from '@mui/icons-material/Delete'
 import Divider from "@mui/material/Divider";
 import { uploadFile, downloadFile, deleteFile, getFiles } from '@/app/api/routes'
-import {redirect} from "next/navigation";
+import { redirect } from "next/navigation";
+import { API } from "@/components/Consts"
 
 export default function LeftBar() {
   let [files, setFiles] = useContext(FilesContext);
@@ -34,9 +35,8 @@ export default function LeftBar() {
 
       reader.onerror = reject;
 
-      if(filetype == )
-      reader.readAsDataURL(input.files[0]);
-
+      if (filetype != "text")
+        reader.readAsDataURL(input.files[0]);
       reader.readAsText(file);  // or reader.readAsDataURL(file) for images/binary files
     });
   }
@@ -49,7 +49,7 @@ export default function LeftBar() {
     const filedatas = await readFileAsync(file, file.filetype)
 
     const res = await fetch("/api/postFile", {
-      method: 'POST',
+      method: 'PUT',
       headers: {
         name: file.name,
         filetype: file.filetype,
@@ -73,10 +73,7 @@ export default function LeftBar() {
     // link.download = file.fileName;
     // link.click();
 
-    let res = await fetch("/api/getFile", {
-      headers: {
-        'fileId' : fileId,
-      }
+    let _res = await fetch(`${API}/localfile?fileId=${fileId}`, {
     })
 
 
@@ -105,66 +102,63 @@ export default function LeftBar() {
   }
 
   return (
-      <>
-        <List>
+    <>
+      <List>
+        <ListItem key={"home"} disablePadding>
+          <ListItemButton onClick={homeButton}>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Home"} />
+          </ListItemButton>
+        </ListItem>
 
-
-            <ListItem key={"home"} disablePadding>
-              <ListItemButton onClick={homeButton}>
-                <ListItemIcon>
-                  <HomeIcon />
-                </ListItemIcon>
-                <ListItemText primary={"Home"} />
-              </ListItemButton>
-            </ListItem>
-
-          <a href={"api/getFile/"+fileId} style={{textDecoration: "none", color: "inherit"}} target="_blank">
-            <ListItem key={"download"} disablePadding>
-              <ListItemButton onClick={downloadButton}>
-                <ListItemIcon>
-                  <FileDownloadIcon />
-                </ListItemIcon>
-                <ListItemText primary={"Download"} />
-              </ListItemButton>
-            </ListItem>
-          </a>
-
-          <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: 'none' }}
-              onChange={handleFileChange}
-          />
-          <ListItem key={"upload"} disablePadding>
-            <ListItemButton onClick={uploadButton}>
+        <a href={`${API}/localfile?fileId=${fileId}`} style={{ textDecoration: "none", color: "inherit" }} target="_blank">
+          <ListItem key={"download"} disablePadding>
+            <ListItemButton onClick={downloadButton}>
               <ListItemIcon>
-                <FileUploadIcon />
+                <FileDownloadIcon />
               </ListItemIcon>
-              <ListItemText primary={"Upload"} />
+              <ListItemText primary={"Download"} />
             </ListItemButton>
           </ListItem>
+        </a>
+        <input
+          type="file"
+          ref={fileInputRef}
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
+        <ListItem key={"upload"} disablePadding>
+          <ListItemButton onClick={uploadButton}>
+            <ListItemIcon>
+              <FileUploadIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Upload"} />
+          </ListItemButton>
+        </ListItem>
 
-          <ListItem key={"delete"} disablePadding>
-            <ListItemButton onClick={deleteButton}>
-              <ListItemIcon>
-                <DeleteIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Delete"} />
-            </ListItemButton>
-          </ListItem>
-        </List>
+        <ListItem key={"delete"} disablePadding>
+          <ListItemButton onClick={deleteButton}>
+            <ListItemIcon>
+              <DeleteIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Delete"} />
+          </ListItemButton>
+        </ListItem>
+      </List>
 
-        <Divider sx={{ mt: "auto" }} />
-        <List>
-          <ListItem key={"Settings"} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Settings"} />
-            </ListItemButton>
-          </ListItem>
-        </List>
-      </>
+      <Divider sx={{ mt: "auto" }} />
+      <List>
+        <ListItem key={"Settings"} disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Settings"} />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </>
   );
 }

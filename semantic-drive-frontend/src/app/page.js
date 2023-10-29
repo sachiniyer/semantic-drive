@@ -10,6 +10,7 @@ import ListItem from "@mui/material/ListItem";
 import FileGrid from "@/components/FileGrid";
 import FileList from "@/components/FileList";
 import { LayoutContext, FilesContext, FileIdContext } from "@/components/Contexts";
+import { API } from "@/components/Consts"
 
 export default function HomePage() {
   let [layout, _setLayout] = useContext(LayoutContext);
@@ -20,10 +21,12 @@ export default function HomePage() {
   let [displayFileContent, setDisplayFileContent] = useState(<></>);
 
   useEffect(() => {
-    // fetch('/api/files')
-    //   .then(response => response.json())
-    //   .then(data => setFiles(data.files));
-    setFiles([1, 2, 3, 4]);
+    fetch(`${API}/files`)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        setFiles(data)
+      });
   }, []);
 
   function closeDisplayFile() {

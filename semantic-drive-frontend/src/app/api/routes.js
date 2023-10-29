@@ -110,6 +110,8 @@ export function metaFile(fileId) {
 }
 
 export function deleteFile(fileId) {
+  const formData = new FormData();
+  formData.append("fileId", fileId);
   fetch('/file', {
     method: 'DELETE',
     headers: {
@@ -119,6 +121,7 @@ export function deleteFile(fileId) {
   })
     .then(response => response.json())
     .then(data => { return (data) });
+
 }
 
 export function getFiles() {
