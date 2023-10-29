@@ -16,7 +16,7 @@ def info():
                     fileType     VARCHAR(50),
                     fileName     VARCHAR(300),
                     fileURL      VARCHAR(200),
-                    mindsSummary VARCHAR(5000)
+                    mindsSummary BYTEA
                     );
                     ''')
 
@@ -30,7 +30,7 @@ def insert_file(entry):
         cur.execute(
           (f"UPSERT INTO db (id, uploadTime, fileType, fileName, fileURL, mindsSummary)"
            f" VALUES ('{entry['id']}','{entry['uploadTime']}','{entry['fileType']}','{entry['fileName']}',"
-           f"'{entry['fileURL']}', '{entry['mindsSummary']}')"))
+           f"'{entry['fileURL']}', {entry['mindsSummary']})"))
         logging.debug("create_accounts(): status message: %s",
                       cur.statusmessage)
      conn.commit()

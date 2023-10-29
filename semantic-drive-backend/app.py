@@ -1,13 +1,14 @@
 import flask
+from flask import send_from_directory
 from db import file_ids, insert_file, find_file, delete_all, file_summaries
 from flask_cors import cross_origin
-from enum import Enum
 import uuid
 import json
 import requests
 import os
 from dotenv import load_dotenv
 from summary import summarize
+import base64
 
 app = flask.Flask(__name__)
 
@@ -20,7 +21,7 @@ def index():
 
 def download_file(id, file):
     # save file to local storage in the files directory
-    with open('files/' + str(id), 'w') as f:
+    with open('files/' + str(id), 'wb') as f:
         f.write(file)
 
 # FILE UPLOAD and RETRIEVAL
@@ -34,20 +35,21 @@ def file():
             "uploadTime": response[1],
             "fileType": response[2],
             "fileName": response[3],
-            "file": response[4]
+            "file": response[4],
+            "summary": base64.b64decode(response[5]).decode('utf-8')
         })
     elif flask.request.method == 'POST':
         id = uuid.uuid4()
         uploadTime = flask.request.form['uploadTime']
         fileType = flask.request.form['fileType']
         fileName = flask.request.form['fileName']
-        fileData = flask.request.form['file']
+        fileData = flask.request.files['file'].read()
 
         # parse the fileArg depending on fileType
         download_file(id, fileData)
         url = "/localfile?fileId=" + str(id)
 
-        mindsSummary = summarize(id, fileType, url) 
+        mindsSummary = base64.b64encode(str.encode(summarize(id, fileType, url)))
 
         entry = {'id': id, 'uploadTime': uploadTime,
                  'fileType': fileType, 'fileName': fileName,
@@ -94,8 +96,7 @@ def files():
 @cross_origin()
 def localfile():
     id = flask.request.args.get('fileId')
-    with open('files/' + str(id), 'rb') as f:
-        file = f.read()
+    file = send_from_directory('files', id)
     return file
 
 @app.route('/deleteall', methods=['DELETE'])
