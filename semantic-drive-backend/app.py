@@ -1,11 +1,12 @@
-"""Docstring."""
 import flask
-from db import file_ids, insert_file, find_file, delete_all
+from db import file_ids, insert_file, find_file, delete_all, file_summaries
 from flask_cors import cross_origin
 from enum import Enum
 import uuid
 import json
-import base64
+import requests
+import os
+from dotenv import load_dotenv
 
 class FileType(Enum):
     image = "image"
@@ -59,32 +60,38 @@ def file():
         # return the file id of the newly added file
         return json.dumps({"fileId": str(id)})
     
-# FILE DELETION
 
-@app.route('/search', methods=['POST'])
+@app.route('/search', methods=['GET'])
 @cross_origin()
 def search():
-    # string
-    terms = flask.request.form['terms']
+    terms = flask.request.args.get('terms')
+    api_token = os.getenv("HF_TOKEN")
+    API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
+    headers = {"Authorization": f"Bearer {api_token}"}
+    def send(payload):
+        response = requests.post(API_URL, headers=headers, json=payload)
+        return response.json()
 
-    # get all data of all files
-    ids = file_ids()
-    info = []
-    for id in ids:
-        # [(id:'', uploadTime:'', fileType:'', fileName:'', fileData:'', fileText:'', mindsSummary:'')]
-        info.append(find_file(id))
+    summaries = file_summaries()
+    summaries_data = [summary[1] for summary in summaries]
+    print(summaries_data)
+    similarity = send(
+        {
+            "inputs": {
+                "source_sentence": {terms},
+                "sentences": summaries_data
+            }
+        })
 
-    # call search algorithm
-    # return results
-    
-# get all files 
+    similarity = { similarity[i]: summaries[i] for i in range(len(similarity)) }
+    print(similarity)
+    similarity = sorted(similarity.items(), key=lambda x: x[0], reverse=True)
+    return json.dumps(similarity)
+
 @app.route('/files', methods=['GET'])
 @cross_origin()
 def files():
     return file_ids()
-
-
-
 
 @app.route('/localfile', methods=['GET'])
 @cross_origin()
@@ -101,4 +108,5 @@ def deleteall():
     return "200 OK"
 
 if __name__ == '__main__':
-	app.run(port=8000,debug=True)
+    load_dotenv()
+    app.run(host='0.0.0.0', port=8000,debug=True)

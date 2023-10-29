@@ -1,9 +1,11 @@
 import psycopg2
-from psycopg2.errors import SerializationFailure
+import os
 
 import logging
+from dotenv import load_dotenv
 
-conn = psycopg2.connect("postgresql://brayton:tvwWqV1_ccz5DB6dyfX_lg@arid-molerat-6026.g8z.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full&sslrootcert=root.crt")
+load_dotenv()
+conn = psycopg2.connect(os.getenv("POSTGRES_CON"))
 
 def info():
     with conn.cursor() as cur:
@@ -46,6 +48,21 @@ def file_ids():
         id_values = [result[0] for result in cur.fetchall()]
      conn.commit()
      return id_values
+
+def file_summaries():
+    """
+    Get file summaries.
+
+    Returns tuple pairings of (id, summary)
+    """
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT id, mindsSummary FROM db"),
+        logging.debug("create_accounts(): status message: %s",
+                      cur.statusmessage)
+        id_values = [(result[0], result[1]) for result in cur.fetchall()]
+    conn.commit()
+    return id_values
 
 def find_file(id): 
      with conn.cursor() as cur:
