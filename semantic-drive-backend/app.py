@@ -63,29 +63,24 @@ def file():
 @app.route('/search', methods=['GET'])
 @cross_origin()
 def search():
-    terms = flask.request.args.get('terms')
-    api_token = os.getenv("HF_TOKEN")
     API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
-    headers = {"Authorization": f"Bearer {api_token}"}
+    headers = {"Authorization": f"Bearer {os.getenv('HF_TOKEN')}"}
+
+    terms = flask.request.args.get('terms')
     def send(payload):
         response = requests.post(API_URL, headers=headers, json=payload)
         return response.json()
 
     summaries = file_summaries()
-    summaries_data = [summary[1] for summary in summaries]
-    print(summaries_data)
-    similarity = send(
-        {
-            "inputs": {
-                "source_sentence": {terms},
-                "sentences": summaries_data
-            }
-        })
-
-    similarity = { similarity[i]: summaries[i] for i in range(len(similarity)) }
-    print(similarity)
-    similarity = sorted(similarity.items(), key=lambda x: x[0], reverse=True)
-    return json.dumps(similarity)
+    ids = [summary[0] for summary in summaries]
+    summaries = [base64.b64decode(bytes(summary[1])).decode('utf-8') for summary in summaries]
+    data = send({"inputs": {
+        "source_sentence": terms,
+        "sentences": summaries
+    }})
+    threshold = 0.3
+    res = [ids[i] for i in range(len(data)) if data[i] > threshold]
+    return json.dumps({"fileIds": res})
 
 @app.route('/files', methods=['GET'])
 @cross_origin()
