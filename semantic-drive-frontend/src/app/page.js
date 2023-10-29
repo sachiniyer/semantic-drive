@@ -14,7 +14,7 @@ import { API } from "@/components/Consts"
 
 export default function HomePage() {
   let [layout, _setLayout] = useContext(LayoutContext);
-  let [files, setFiles] = useContext(FilesContext);
+  let [_files, setFiles] = useContext(FilesContext);
   let [_fileId, setFileId] = useContext(FileIdContext);
   let [newId, setNewId] = useState(0);
   let [displayFile, setDisplayFile] = useState(false);
@@ -24,7 +24,6 @@ export default function HomePage() {
     fetch(`${API}/files`)
       .then(response => response.json())
       .then(data => {
-        console.log(data)
         setFiles(data)
       });
   }, []);
@@ -77,9 +76,9 @@ export default function HomePage() {
 
   function fileContent() {
     if (layout == "grid") {
-      return <FileGrid files={files} displayFile={changeDisplayFile} />;
+      return <FileGrid displayFile={changeDisplayFile} />;
     } else {
-      return <FileList files={files} displayFile={changeDisplayFile} />;
+      return <FileList displayFile={changeDisplayFile} />;
     }
   }
 

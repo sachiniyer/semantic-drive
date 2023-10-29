@@ -18,45 +18,45 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {/* <ThemeRegistry> */}
-        <LayoutRegistry>
-          <FilesRegistry>
-            <FileIdRegistry>
-              <Drawer
-                sx={{
-                  width: DRAWER_WIDTH,
-                  flexShrink: 0,
-                  "& .MuiDrawer-paper": {
+        <ThemeRegistry>
+          <LayoutRegistry>
+            <FilesRegistry>
+              <FileIdRegistry>
+                <Drawer
+                  sx={{
                     width: DRAWER_WIDTH,
-                    boxSizing: "border-box",
-                    top: ["48px", "56px", "64px"],
-                    height: "auto",
-                    bottom: 0,
-                  },
-                }}
-                variant="permanent"
-                anchor="left"
-              >
-                <SearchBar drawerWidth={DRAWER_WIDTH} />
-                <Divider />
-                <LeftBar />
-              </Drawer>
-              <Box
-                component="main"
-                sx={{
-                  flexGrow: 1,
-                  bgcolor: "background.default",
-                  ml: `${DRAWER_WIDTH}px`,
-                  mt: ["48px", "56px", "64px"],
-                  p: 3,
-                }}
-              >
-                {children}
-              </Box>
-            </FileIdRegistry>
-          </FilesRegistry>
-        </LayoutRegistry>
-        {/* </ThemeRegistry> */}
+                    flexShrink: 0,
+                    "& .MuiDrawer-paper": {
+                      width: DRAWER_WIDTH,
+                      boxSizing: "border-box",
+                      top: ["48px", "56px", "64px"],
+                      height: "auto",
+                      bottom: 0,
+                    },
+                  }}
+                  variant="permanent"
+                  anchor="left"
+                >
+                  <SearchBar drawerWidth={DRAWER_WIDTH} />
+                  <Divider />
+                  <LeftBar />
+                </Drawer>
+                <Box
+                  component="main"
+                  sx={{
+                    flexGrow: 1,
+                    bgcolor: "background.default",
+                    ml: `${DRAWER_WIDTH}px`,
+                    mt: ["48px", "56px", "64px"],
+                    p: 3,
+                  }}
+                >
+                  {children}
+                </Box>
+              </FileIdRegistry>
+            </FilesRegistry>
+          </LayoutRegistry>
+        </ThemeRegistry>
       </body>
     </html>
   );

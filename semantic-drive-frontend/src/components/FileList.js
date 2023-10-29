@@ -1,13 +1,15 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { List } from "@mui/material";
 import ListCard from "@/components/ListCard";
 import { API } from "@/components/Consts"
+import { FilesContext } from "@/components/Contexts";
 
-export default function FileList({ files, displayFile }) {
+export default function FileList({ displayFile }) {
   let [items, setItems] = useState([]);
-
+  let [files, _] = useContext(FilesContext)
   useEffect(() => {
+    console.log(files)
     let newitems = [];
     for (let f of files) {
       const formData = new FormData();
@@ -27,6 +29,7 @@ export default function FileList({ files, displayFile }) {
           />,
         ));
     }
+    console.log(newitems)
     setItems(newitems);
   }, [files]);
 

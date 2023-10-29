@@ -1,12 +1,15 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 import MediaCard from "@/components/MediaCard";
 import { API } from "@/components/Consts"
+import { FilesContext } from "@/components/Contexts";
 
-export default function FileGrid({ files, displayFile }) {
+export default async function FileGrid({ displayFile }) {
   let [items, setItems] = useState([]);
+  let [files, _] = useContext(FilesContext)
   useEffect(() => {
+    console.log(files)
     let newItems = [];
     for (let f of files) {
       const formData = new FormData();
@@ -17,7 +20,6 @@ export default function FileGrid({ files, displayFile }) {
       })
         .then(response => response.json())
         .then(data => {
-          console.log(data);
           newItems.push(
             <Grid key={f}>
               <MediaCard
@@ -31,6 +33,7 @@ export default function FileGrid({ files, displayFile }) {
           )
         });
     }
+    console.log(`New Items ${newItems}`)
     setItems(newItems);
   }, [files]);
   return (
