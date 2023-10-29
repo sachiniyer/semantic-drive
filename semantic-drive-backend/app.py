@@ -18,7 +18,6 @@ app = flask.Flask(__name__)
 def index():
     return "200 SERVER OK"
 
-
 def download_file(id, file):
     # save file to local storage in the files directory
     with open('files/' + str(id), 'wb') as f:

@@ -5,22 +5,24 @@ import MediaCard from "@/components/MediaCard";
 import { API } from "@/components/Consts"
 import { FilesContext } from "@/components/Contexts";
 
-export default async function FileGrid({ displayFile }) {
+export default function FileGrid({ displayFile }) {
   let [items, setItems] = useState([]);
   let [files, _] = useContext(FilesContext)
   useEffect(() => {
     console.log(files)
-    let newItems = [];
+    let futures = [];
     for (let f of files) {
       const formData = new FormData();
       formData.append("fileId", f);
-      fetch(`${API}/file`, {
+      futures.push(fetch(`${API}/file`, {
         method: "POST",
         body: formData,
       })
         .then(response => response.json())
         .then(data => {
-          newItems.push(
+          // console.log(data)
+          // newItems.push(
+          return (
             <Grid key={f}>
               <MediaCard
                 image="https://source.unsplash.com/random"
@@ -30,11 +32,12 @@ export default async function FileGrid({ displayFile }) {
                 displayFile={displayFile}
               />
             </Grid>,
-          )
-        });
-    }
-    console.log(`New Items ${newItems}`)
-    setItems(newItems);
+          );
+        }))}
+    Promise.all(futures).then((data) => {
+      console.log(data)
+      setItems(data)
+    });
   }, [files]);
   return (
     <Grid

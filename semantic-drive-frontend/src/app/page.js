@@ -38,6 +38,11 @@ export default function HomePage() {
       setFileId(0);
     } else {
       setFileId(newId);
+      fetch(`${API}/file`, {
+          method: "POST",
+          body: JSON.stringify({ fileId: newId }),
+      }).then(response => response.json())
+        .then(data => {
       setDisplayFileContent(
         <Drawer
           sx={{
@@ -65,6 +70,8 @@ export default function HomePage() {
             </ListItem>
           </List>
         </Drawer>,
+
+          )
       );
     }
   }, [newId, displayFile]);
