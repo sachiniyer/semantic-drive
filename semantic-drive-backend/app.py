@@ -46,9 +46,11 @@ def file():
         fileData = flask.request.form['file']
 
         # parse the fileArg depending on fileType
-        fileText = "placeholder"
+        fileText = "NULL"
         download_file(id, fileData)
         url = "/localfile?fileId=" + str(id)
+        if fileType == FileType.text:
+            fileText = fileData
 
         mindsSummary = ""
         entry = {'id': id, 'uploadTime': uploadTime,
