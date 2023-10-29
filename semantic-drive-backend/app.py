@@ -21,9 +21,9 @@ def index():
 # FILE UPLOAD and RETRIEVAL
 @app.route('/file', methods=['GET', 'POST'])
 @cross_origin()
-def file(id):
+def file():
     if flask.request.method == 'GET':
-        return find_file(id)
+        return find_file(flask.request.form['id'])
     elif flask.request.method == 'POST':
         uploadTime = flask.request.form['uploadTime']
         fileType = flask.request.form['fileType']
@@ -63,7 +63,7 @@ def search():
 
     # call search algorithm
     # return results
-    #
+    
 # get all files 
 @app.route('/files', methods=['GET'])
 @cross_origin()
