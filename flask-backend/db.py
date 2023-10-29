@@ -3,7 +3,7 @@ from psycopg2.errors import SerializationFailure
 
 import logging
 
-conn = psycopg2.connect("postgresql://chantal:kuwhacks2022@free-tier6.gcp-asia-southeast1.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full&options=--cluster%3D2022hacking-3042")
+conn = psycopg2.connect("postgresql://brayton:tvwWqV1_ccz5DB6dyfX_lg@arid-molerat-6026.g8z.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full&sslrootcert=/Users/brayton/.postgresql/root.crt")
 
 def info():
     with conn.cursor() as cur:
@@ -21,16 +21,18 @@ def info():
 
     conn.commit()
 
+info()
+
 def insert_file(entry):
      with conn.cursor() as cur:
         cur.execute(
-          f"UPSERT INTO db (uploadTime, fileType, fileName, fileData, fileTest, mindsSummary) VALUES ('{entry['uploadTime']}', '{entry['fileType']}', '{entry['fileName']}', {entry['fileData']}, '{entry['fileTest']}', '{entry['mindsSummary']}')")
+          f"UPSERT INTO db (id, uploadTime, fileType, fileName, fileData, fileTest, mindsSummary) VALUES ('{entry['id']}','{entry['uploadTime']}', '{entry['fileType']}', '{entry['fileName']}', {entry['fileData']}, '{entry['fileTest']}', '{entry['mindsSummary']}')")
         logging.debug("create_accounts(): status message: %s",
                       cur.statusmessage)
 
      conn.commit()
 
-def file_ids(conn):
+def file_ids():
      with conn.cursor() as cur:
         cur.execute(
              "SELECT id FROM db"),
@@ -58,3 +60,10 @@ def delete_file(id):
                       cur.statusmessage)
      conn.commit()
      
+def delete_all():
+     with conn.cursor() as cur:
+        cur.execute(
+             f"DELETE * FROM db"),
+        logging.debug("create_accounts(): status message: %s",
+                      cur.statusmessage)
+     conn.commit()

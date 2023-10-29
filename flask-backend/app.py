@@ -3,16 +3,21 @@ import psycopg2
 from db import *
 from flask_cors import CORS, cross_origin
 from enum import Enum
+import uuid
 class fileType(Enum):
     image = "image"
     text = "text"
 
-app = Flask(__name__)
-conn = psycopg2.connect("postgresql://brayton:tvwWqV1_ccz5DB6dyfX_lg@arid-molerat-6026.g8z.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/.postgresql/root.crt")
+app = flask.Flask(__name__)
 
+# / route with 200 OK response
+@app.route('/', methods=['GET'])
+@cross_origin()
+def index():
+    return "200 SERVER OK"
 
-# GET file 
-@app.route('/file/<id>', methods=['GET', 'POST'])
+# FILE UPLOAD and RETRIEVAL
+@app.route('/file', methods=['GET', 'POST'])
 @cross_origin()
 def file(id):
     if flask.request.method == 'GET':
@@ -31,4 +36,22 @@ def file(id):
             fileData = ""
             fileText = fileArg
             
-             
+        mindsSummary = ""
+        id = uuid.uuid4()
+        entry = {'id':id, 'uploadTime': uploadTime, 'fileType': fileType, 'fileName': fileName, 'fileData': fileData, 'fileText': fileText, 'mindsSummary': mindsSummary}
+        insert_file(entry)
+
+        # return the file id of the newly added file
+        return id
+    
+# FILE DELETION
+
+
+# get all files 
+@app.route('/files', methods=['GET'])
+@cross_origin()
+def files():
+    return file_ids()
+    
+if __name__ == '__main__':
+	app.run(debug=True)
