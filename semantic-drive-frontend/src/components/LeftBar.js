@@ -20,6 +20,7 @@ export default function LeftBar() {
   let [files, setFiles] = useContext(FilesContext);
   let [fileId, _setFileId] = useContext(FileIdContext);
   const fileInputRef = useRef(null);
+  var SERVER_URL = 'https://8cf1-2600-1010-b043-bba0-49cd-1e84-ea53-11f7.ngrok-free.app';
 
   const handleCustomButtonClick = () => {
     fileInputRef.current.click();
@@ -45,19 +46,72 @@ export default function LeftBar() {
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
 
-
-
     const filedatas = await readFileAsync(file, file.filetype)
+    console.log('the data is '+ filedatas+'type is'+file.filetype)
 
-    const res = await fetch("/api/postFile", {
-      method: 'PUT',
-      headers: {
-        name: file.name,
-        filetype: file.filetype,
-      },
-      body: filedatas,
-    });
+    // if txt is in file name
+    if (file.name.includes(".txt")) {
+      file.filetype = "text"
+    }
+    //image
+    else if (file.name.includes(".jpg") || file.name.includes(".png") || file.name.includes(".jpeg")) {
+      file.filetype = "image"
+    }
+    //audio
+    else if (file.name.includes(".mp3") || file.name.includes(".wav") || file.name.includes(".ogg") || file.name.includes(".flac")) {
+      file.filetype = "audio"
+    }
+    console.log(file.filetype)
 
+    // const res = await fetch("/api/postFile", {
+    //   method: 'PUT',
+    //   headers: {
+    //     name: file.name,
+    //     filetype: file.filetype,
+    //   },
+    //   body: filedatas,
+    // });
+    var uploadTime = new Date().toISOString();
+
+    const formData = new FormData();
+    formData.append("uploadTime", uploadTime);
+    formData.append("fileType", file.filetype);
+    formData.append("fileName", file.name);
+    formData.append("file", filedatas);
+    
+    const request = new XMLHttpRequest();
+    request.open("POST", "".concat(SERVER_URL, "/file"));
+    request.send(formData);
+
+    request.onload = function() {
+      if (request.status === 200) {
+        // Request was successful, and response is available in request.responseText
+        console.log("Request was successful.");
+        console.log(request.responseText);
+      } else {
+        // Request was not successful
+        console.log("Request failed with status: " + request.status);
+      }
+    };
+    
+    
+    
+    // const res = await fetch("".concat(SERVER_URL, "/file"), {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify({
+    //     uploadTime: uploadTime,
+    //     fileType: file.filetype,
+    //     fileName: file.name,
+    //     file: filedatas
+    //   })
+    // }).then(function (response) {
+    //   return response.json();
+    // }).then(function (data) {
+    //   return data.fileId;
+    // });
 
   };
 

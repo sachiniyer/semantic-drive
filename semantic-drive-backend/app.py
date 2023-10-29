@@ -21,7 +21,8 @@ def index():
 def download_file(id, file):
     # save file to local storage in the files directory
     with open('files/' + str(id), 'wb') as f:
-        f.write(file)
+        file_bytes = base64.b64decode(file)
+        f.write(file_bytes)
 
 # FILE UPLOAD and RETRIEVAL
 @app.route('/file', methods=['GET', 'POST'])
@@ -42,7 +43,7 @@ def file():
         uploadTime = flask.request.form['uploadTime']
         fileType = flask.request.form['fileType']
         fileName = flask.request.form['fileName']
-        fileData = flask.request.files['file'].read()
+        fileData = flask.request.form['file']
 
         # parse the fileArg depending on fileType
         download_file(id, fileData)
@@ -53,6 +54,7 @@ def file():
         entry = {'id': id, 'uploadTime': uploadTime,
                  'fileType': fileType, 'fileName': fileName,
                  'fileURL': url, 'mindsSummary': mindsSummary}
+        print(entry)
         insert_file(entry)
 
         # return the file id of the newly added file
