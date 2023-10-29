@@ -6,6 +6,7 @@ from enum import Enum
 import uuid
 import requests
 import json
+import base64
 
 class FileType(Enum):
     image = "image"
@@ -24,7 +25,14 @@ def index():
 @cross_origin()
 def file():
     if flask.request.method == 'GET':
-        return find_file(flask.request.form['id'])
+        response = find_file(flask.request.form['fileId'])
+
+        return json.dumps({
+            "uploadTime": response[1],
+            "fileType": response[2],
+            "fileName": response[3],
+            "file": base64.b64encode(response[4])
+        })
     elif flask.request.method == 'POST':
         uploadTime = flask.request.form['uploadTime']
         fileType = flask.request.form['fileType']
