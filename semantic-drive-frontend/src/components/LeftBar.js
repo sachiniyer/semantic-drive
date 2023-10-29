@@ -36,8 +36,9 @@ export default function LeftBar() {
       reader.onerror = reject;
 
       if (filetype != "text")
-        reader.readAsDataURL(input.files[0]);
-      reader.readAsText(file);  // or reader.readAsDataURL(file) for images/binary files
+        reader.readAsDataURL(file);
+      else 
+        reader.readAsText(file);  // or reader.readAsDataURL(file) for images/binary files
     });
   }
 
