@@ -56,7 +56,7 @@ def file_summaries():
             "SELECT id, mindsSummary FROM db"),
         logging.debug("create_accounts(): status message: %s",
                       cur.statusmessage)
-        id_values = [(result[0], result[1]) for result in cur.fetchall()]
+        id_values = cur.fetchall()
     conn.commit()
     return id_values
 

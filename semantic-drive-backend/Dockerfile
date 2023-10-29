@@ -1,26 +1,15 @@
-FROM --platform=$BUILDPLATFORM python:3.10-alpine AS builder
+FROM --platform=$BUILDPLATFORM python:3.10-slim-buster
+
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    cmake
 
 WORKDIR /app
-
+RUN python -m pip install --upgrade pip
 COPY requirements.txt /app
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip3 install -r requirements.txt
+RUN pip3 install flask flask_cors requests psycopg2-binary python-dotenv 'transformers[torch]' pillow
 
 COPY . /app
 
 ENTRYPOINT ["python3"]
 CMD ["app.py"]
-
-FROM builder as dev-envs
-
-RUN <<EOF
-apk update
-apk add git
-EOF
-
-RUN <<EOF
-addgroup -S docker
-adduser -S --shell /bin/bash --ingroup docker vscode
-EOF
-# install Docker tools (cli, buildx, compose)
-COPY --from=gloursdocker/docker / /
