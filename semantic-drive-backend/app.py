@@ -7,6 +7,7 @@ import json
 import requests
 import os
 from dotenv import load_dotenv
+from summary import summarize
 
 app = flask.Flask(__name__)
 
@@ -45,7 +46,9 @@ def file():
         # parse the fileArg depending on fileType
         download_file(id, fileData)
         url = "/localfile?fileId=" + str(id)
-        mindsSummary = ""
+
+        mindsSummary = summarize(id, fileType, url) 
+
         entry = {'id': id, 'uploadTime': uploadTime,
                  'fileType': fileType, 'fileName': fileName,
                  'fileURL': url, 'mindsSummary': mindsSummary}
