@@ -26,7 +26,7 @@ info()
 def insert_file(entry):
      with conn.cursor() as cur:
         cur.execute(
-          f"UPSERT INTO db (id, uploadTime, fileType, fileName, fileData, fileTest, mindsSummary) VALUES ('{entry['id']}','{entry['uploadTime']}', '{entry['fileType']}', '{entry['fileName']}', {entry['fileData']}, '{entry['fileTest']}', '{entry['mindsSummary']}')")
+          f"UPSERT INTO db (id, uploadTime, fileType, fileName, fileData, fileText, mindsSummary) VALUES ('{entry['id']}','{entry['uploadTime']}','{entry['fileType']}','{entry['fileName']}','{entry['fileData']}', '{entry['fileText']}', '{entry['mindsSummary']}')")
         logging.debug("create_accounts(): status message: %s",
                       cur.statusmessage)
 

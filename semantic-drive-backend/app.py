@@ -5,8 +5,9 @@ from flask_cors import CORS, cross_origin
 from enum import Enum
 import uuid
 import requests
+import json
 
-class fileType(Enum):
+class FileType(Enum):
     image = "image"
     text = "text"
 
@@ -28,23 +29,18 @@ def file():
         uploadTime = flask.request.form['uploadTime']
         fileType = flask.request.form['fileType']
         fileName = flask.request.form['fileName']
-        fileArg = flask.request.files['file']
+        fileData = flask.request.form['file']
 
         # parse the fileArg depending on fileType
-        if fileType == fileType.image:
-            fileData = fileArg
-            fileText = ""
-        elif fileType == fileType.text:
-            fileData = ""
-            fileText = fileArg
-            
+        fileText = "placeholder"
+
         mindsSummary = ""
         id = uuid.uuid4()
         entry = {'id':id, 'uploadTime': uploadTime, 'fileType': fileType, 'fileName': fileName, 'fileData': fileData, 'fileText': fileText, 'mindsSummary': mindsSummary}
         insert_file(entry)
 
         # return the file id of the newly added file
-        return id
+        return json.dumps({"fileId": str(id)})
     
 # FILE DELETION
 
