@@ -15,6 +15,8 @@ def summarize(id, fileType, url):
         captioner_text = captioner(f"files/{id}")
         return captioner_text[0]['generated_text']
     if fileType == 'audio':
-        pass
+        pipe = pipeline("automatic-speech-recognition", "openai/whisper-large-v2")
+        sum_text = pipe(f"files/{id}")
+        return sum_text['text']
     if fileType == 'video':
         pass
