@@ -28,8 +28,8 @@ def init_db():
     global conn
     with conn.cursor() as cur:
         cur.execute(
-            '''
-            CREATE TABLE IF NOT EXISTS db (
+            f'''
+            CREATE TABLE IF NOT EXISTS {os.getenv('DBNAME')}(
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             uploadTime   VARCHAR(50),
             fileType     VARCHAR(50),
@@ -39,7 +39,6 @@ def init_db():
             );
             '''
         )
-
     conn.commit()
 
 
@@ -55,13 +54,14 @@ def insert_file(entry):
     global conn
     with conn.cursor() as cur:
        cur.execute(
-           (f"UPSERT INTO db "
-            f"(id, uploadTime, fileType, fileName, fileURL, summary)"
-            f" VALUES ('{entry['id']}','{entry['uploadTime']}'"
-            f",'{entry['fileType']}','{entry['fileName']}'"
-            f",'{entry['fileURL']}',{entry['summary']})"))
-       logging.debug("create_accounts(): status message: %s",
-                     cur.statusmessage)
+           f'''
+           UPSERT INTO db
+           (id, uploadTime, fileType, fileName, fileURL, summary)
+           VALUES ('{entry['id']}','{entry['uploadTime']}',
+           '{entry['fileType']}','{entry['fileName']}',
+           '{entry['fileURL']}',{entry['summary']})
+           '''
+       )
     conn.commit()
 
 
@@ -76,9 +76,7 @@ def file_ids():
     """
     global conn
     with conn.cursor() as cur:
-       cur.execute("SELECT id FROM db"),
-       logging.debug("create_accounts(): status message: %s",
-                     cur.statusmessage)
+       cur.execute(f"SELECT id FROM {os.getenv('DBNAME')}"),
        id_values = [result[0] for result in cur.fetchall()]
     conn.commit()
     return id_values
@@ -95,9 +93,7 @@ def file_summaries():
     """
     global conn
     with conn.cursor() as cur:
-        cur.execute("SELECT id, summary FROM db"),
-        logging.debug("create_accounts(): status message: %s",
-                      cur.statusmessage)
+        cur.execute(f"SELECT id, summary FROM {os.getenv('DBNAME')}"),
         id_values = cur.fetchall()
     conn.commit()
     return id_values
@@ -114,9 +110,7 @@ def find_file(id):
     """
     global conn
     with conn.cursor() as cur:
-       cur.execute(f"SELECT * FROM db WHERE id='{id}'"),
-       logging.debug("create_accounts(): status message: %s",
-                     cur.statusmessage)
+       cur.execute(f"SELECT * FROM {os.getenv('DBNAME')} WHERE id='{id}'"),
        result = cur.fetchone()
     conn.commit()
     return result
@@ -133,9 +127,7 @@ def delete_file(id):
     """
     global conn
     with conn.cursor() as cur:
-       cur.execute(f"DELETE FROM db WHERE id='{id}'"),
-       logging.debug("create_accounts(): status message: %s",
-                     cur.statusmessage)
+       cur.execute(f"DELETE FROM {os.getenv('DBNAME')} WHERE id='{id}'"),
     conn.commit()
 
 
@@ -149,9 +141,7 @@ def delete_all():
         None
     """
     with conn.cursor() as cur:
-       cur.execute("DROP TABLE IF EXISTS db"),
-       logging.debug("create_accounts(): status message: %s",
-                     cur.statusmessage)
+       cur.execute(f"DROP TABLE IF EXISTS {os.getenv('DBNAME')}"),
     conn.commit()
 
 
