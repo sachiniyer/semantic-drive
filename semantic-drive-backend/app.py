@@ -2,12 +2,11 @@
 Main file for the backend server.
 
 It contains the following routes:
-    - /: 200 OK response
-    - /file: GET and POST requests for file upload and retrieval
+    - /: GET request for health check
+    - /file: GET, POST, DELETE requests for file upload, retrieval, deletion
+    - /filedata: GET request for retrieving a file from local storage
+    - /files: GET, DELETE request for retrieving all file ids, deleting all
     - /search: GET request for searching for files
-    - /files: GET request for retrieving all file ids
-    - /localfile: GET request for retrieving a file from local storage
-    - /deleteall: DELETE request for deleting all files from the database
 """
 # flake8: noqa E402
 from dotenv import load_dotenv
@@ -30,17 +29,6 @@ API_URL = ("https://api-inference.huggingface.co/models"
            "/sentence-transformers/all-MiniLM-L6-v2")
 
 
-@app.route('/', methods=['GET'])
-@cross_origin()
-def index():
-    """
-    Route for the backend server.
-
-    Returns a 200 OK response.
-    """
-    return "200 SERVER OK"
-
-
 def download_file(id, file):
     """
     Download a file to the local storage.
@@ -53,6 +41,21 @@ def download_file(id, file):
     """
     with open('files/' + str(id), 'wb') as f:
         f.write(file)
+
+
+@app.route('/', methods=['GET'])
+@cross_origin()
+def index():
+    """
+    Route for the backend server.
+
+    GET request: 200 OK response
+    Args:
+        None
+    Returns:
+        str: 200 OK response
+    """
+    return "200 SERVER OK"
 
 
 @app.route('/file', methods=['GET', 'POST', 'DELETE'])
@@ -75,16 +78,23 @@ def file():
         file (bytes): the file to be uploaded
     Returns:
         json: the id of the newly added file
+
+    DELETE request: delete a file from the database
+    Args:
+        fileId (str): the id of the file to be deleted
+    Returns:
+        str: 200 OK response
     """
     if flask.request.method == 'GET':
         response = find_file(flask.request.form['fileId'])
-        print(response)
+
         return json.dumps({
             "uploadTime": response[1],
             "fileType": response[2],
             "fileName": response[3],
             "file": response[4],
             "summary": base64.b64decode(response[5]).decode('utf-8')})
+
     elif flask.request.method == 'POST':
         id = uuid.uuid4()
         uploadTime = flask.request.form['uploadTime']
@@ -92,19 +102,62 @@ def file():
         fileName = flask.request.form['fileName']
         fileData = flask.request.files['file'].read()
 
-        download_file(id, fileData)
         url = "/localfile?fileId=" + str(id)
-
         summary = base64.b64encode(str.encode(summarize(id, fileType)))
-
         entry = (id, uploadTime, fileType, fileName, url, summary)
+
+        download_file(id, fileData)
         insert_file(entry)
 
         return json.dumps({"fileId": str(id)})
 
     elif flask.request.method == 'DELETE':
         id = flask.request.form['fileId']
+
         delete_file(id)
+
+        return "200 OK"
+
+
+@app.route('/filedata', methods=['GET'])
+@cross_origin()
+def localfile():
+    """
+    Route for retrieving a file from local storage.
+
+    GET request: retrieve a file from local storage
+    Args:
+        fileId (str): the id of the file to be retrieved
+    Returns:
+        file: the file to be retrieved
+    """
+    id = flask.request.args.get('fileId')
+    file = send_from_directory('files', id)
+    return file
+
+
+@app.route('/files', methods=['GET', 'DELETE'])
+@cross_origin()
+def files():
+    """
+    Route for retrieving all file ids.
+
+    GET request: retrieve all file ids
+    Args:
+        None
+    Returns:
+        json: the ids of all files
+
+    DELETE request: delete all files from the database
+    Args:
+        None
+    Returns:
+        str: 200 OK response
+    """
+    if flask.request.method == 'GET':
+        return file_ids()
+    else:
+        delete_all()
         return "200 OK"
 
 
@@ -114,6 +167,7 @@ def search():
     """
     Route for searching for files.
 
+    GET request: search for files
     Args:
         terms (str): the search terms
     Returns:
@@ -138,51 +192,6 @@ def search():
     threshold = 0.3
     res = [ids[i] for i in range(len(data)) if data[i] > threshold]
     return json.dumps({"fileIds": res})
-
-
-@app.route('/files', methods=['GET'])
-@cross_origin()
-def files():
-    """
-    Route for retrieving all file ids.
-
-    Args:
-        None
-    Returns:
-        json: the ids of all files
-    """
-    return file_ids()
-
-
-@app.route('/localfile', methods=['GET'])
-@cross_origin()
-def localfile():
-    """
-    Route for retrieving a file from local storage.
-
-    Args:
-        fileId (str): the id of the file to be retrieved
-    Returns:
-        file: the file to be retrieved
-    """
-    id = flask.request.args.get('fileId')
-    file = send_from_directory('files', id)
-    return file
-
-
-@app.route('/deleteall', methods=['DELETE'])
-@cross_origin()
-def deleteall():
-    """
-    Route for deleting all files from the database.
-
-    Args:
-        None
-    Returns:
-        None
-    """
-    delete_all()
-    return "200 OK"
 
 
 if __name__ == '__main__':
