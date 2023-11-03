@@ -9,6 +9,12 @@ It contains the following routes:
     - /search: GET request for searching for files
 """
 # flake8: noqa E402
+import base64
+import json
+import uuid
+from flask_cors import cross_origin
+from flask import send_from_directory
+import flask
 from dotenv import load_dotenv
 import logging
 import os
@@ -19,16 +25,10 @@ log_level = getattr(logging, log_level.upper())
 logger = logging.getLogger()
 logging.basicConfig(level=log_level)
 
-import flask
-from flask import send_from_directory
-from flask_cors import cross_origin
-import uuid
-import json
-import base64
+from summary import summarize
+from search import match
 from db import (file_ids, insert_file, find_file,
                 delete_all, file_summaries, delete_file)
-from search import match
-from summary import summarize
 
 app = flask.Flask(__name__)
 

@@ -127,8 +127,8 @@ def find_file(id):
         result (tuple): the file data
     """
     with conn.cursor() as cur:
-       cur.execute(f"SELECT * FROM {os.getenv('TBNAME')} WHERE id='{id}'"),
-       result = cur.fetchone()
+        cur.execute(f"SELECT * FROM {os.getenv('TBNAME')} WHERE id='{id}'"),
+        result = cur.fetchone()
     return result
 
 
@@ -142,7 +142,7 @@ def delete_file(id):
         None
     """
     with conn.cursor() as cur:
-       cur.execute(f"DELETE FROM {os.getenv('TBNAME')} WHERE id='{id}'"),
+        cur.execute(f"DELETE FROM {os.getenv('TBNAME')} WHERE id='{id}'"),
     conn.commit()
 
 
@@ -156,6 +156,6 @@ def delete_all():
         None
     """
     with conn.cursor() as cur:
-       cur.execute(f"DROP TABLE IF EXISTS {os.getenv('TBNAME')}"),
+        cur.execute(f"DROP TABLE IF EXISTS {os.getenv('TBNAME')}"),
     conn.commit()
     init_tb()
