@@ -1,1 +1,1 @@
-export const API = "https://sembox-api.sachiniyer.com"
+export const API = "http://localhost:8000"
