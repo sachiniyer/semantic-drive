@@ -7,7 +7,14 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 RUN python -m pip install --upgrade pip
 COPY requirements.txt /app
-RUN pip3 install flask flask_cors requests psycopg2-binary python-dotenv 'transformers[torch]' pillow
+RUN pip3 install -U flask \
+    flask_cors \
+    requests \
+    psycopg2-binary \
+    python-dotenv \
+    'transformers[torch]' \
+    pillow \
+    sentence_transformers
 
 COPY . /app
 
