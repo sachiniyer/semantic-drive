@@ -8,13 +8,7 @@ This module contains the functions for summarizing the files
 from transformers import pipeline
 
 
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
-captioner = pipeline("image-to-text",
-                     model="Salesforce/blip-image-captioning-base")
-pipe = pipeline("automatic-speech-recognition", "openai/whisper-small")
-
-
-def read_file(id):
+def read_file(downloadName):
     """
     Read a file from local storage.
 
@@ -23,12 +17,12 @@ def read_file(id):
     Returns:
         file (bytes): the file
     """
-    with open('files/' + str(id), 'rb') as f:
+    with open(downloadName, 'rb') as f:
         file = f.read()
     return file
 
 
-def summarize_text(id):
+def summarize_text(downloadName):
     """
     Summarize a text file.
 
@@ -37,12 +31,13 @@ def summarize_text(id):
     Returns:
         summary (str): the summary of the file
     """
-    summarizer_text = summarizer(read_file(id).decode('utf-8'),
+    summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+    summarizer_text = summarizer(read_file(downloadName).decode('utf-8'),
                                  max_length=100, do_sample=False)
     return summarizer_text[0]['summary_text']
 
 
-def summarize_image(id):
+def summarize_image(downloadName):
     """
     Summarize an image file.
 
@@ -51,11 +46,13 @@ def summarize_image(id):
     Returns:
         summary (str): the summary of the file
     """
-    captioner_text = captioner(f"./files/{id}")
+    captioner = pipeline("image-to-text",
+                         model="Salesforce/blip-image-captioning-base")
+    captioner_text = captioner(downloadName)
     return captioner_text[0]['generated_text']
 
 
-def summarize_audio(id):
+def summarize_audio(downloadName):
     """
     Summarize an audio file.
 
@@ -64,13 +61,14 @@ def summarize_audio(id):
     Returns:
         summary (str): the summary of the file
     """
-    ext_text = pipe(f"files/{id}")['text']
+    pipe = pipeline("automatic-speech-recognition", "openai/whisper-small")
+    ext_text = pipe(downloadName)['text']
     summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
     summarizer_text = summarizer(ext_text, max_length=100, do_sample=False)
     return summarizer_text[0]['summary_text']
 
 
-def summarize(id, fileType):
+def summarize(fileType, downloadName):
     """
     Summarize a file.
 
@@ -81,10 +79,10 @@ def summarize(id, fileType):
         summary (str): the summary of the file
     """
     if fileType == "text":
-        return summarize_text(id)
+        return summarize_text(downloadName)
     elif fileType == "image":
-        return summarize_image(id)
+        return summarize_image(downloadName)
     elif fileType == "audio":
-        return summarize_audio(id)
+        return summarize_audio(downloadName)
     else:
         return "File type not supported"

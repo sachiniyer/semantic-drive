@@ -9,9 +9,6 @@ import os
 from sentence_transformers import SentenceTransformer, util
 
 
-model = SentenceTransformer('sentence-transformers/msmarco-distilbert-dot-v5')
-
-
 def match(summaries, terms):
     """
     Search the database.
@@ -21,6 +18,8 @@ def match(summaries, terms):
     Returns:
         result (list): the search result
     """
+    model = SentenceTransformer('sentence-transformers/'
+                                'msmarco-distilbert-dot-v5')
     result = []
     term_emb = model.encode(terms, convert_to_tensor=True)
     for summary in summaries:

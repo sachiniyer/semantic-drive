@@ -116,6 +116,22 @@ def find_file(id):
     return result
 
 
+def find_filename(id):
+    """
+    Find a file name in the database.
+
+    Args:
+        id (str): the id of the file
+    Returns:
+        result (str): the file name
+    """
+    with conn.cursor() as cur:
+        cur.execute(f"SELECT fileName "
+                    f"FROM {os.getenv('TBNAME')} WHERE id='{id}'"),
+        result = cur.fetchone()
+    return result[0]
+
+
 def delete_file(id):
     """
     Delete a file from the database.

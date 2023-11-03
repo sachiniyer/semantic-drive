@@ -13,7 +13,7 @@ import base64
 import json
 import uuid
 from flask_cors import cross_origin
-from flask import send_from_directory
+from flask import send_from_directory, make_response
 import flask
 from dotenv import load_dotenv
 import logging
@@ -27,13 +27,13 @@ logging.basicConfig(level=log_level)
 
 from summary import summarize
 from search import match
-from db import (file_ids, insert_file, find_file,
+from db import (file_ids, insert_file, find_file, find_filename,
                 delete_all, file_summaries_iter, delete_file)
 
 app = flask.Flask(__name__)
 
 
-def download_file(id, file):
+def download_file(id, file, fileName):
     """
     Download a file to the local storage.
 
@@ -41,10 +41,16 @@ def download_file(id, file):
         id (str): the id of the file
         file (bytes): the file to be downloaded
     Returns:
-        None
+        filePath (str): the path to the downloaded file
     """
-    with open('files/' + str(id), 'wb') as f:
+    extension = fileName.split('.')[-1]
+    download_name = f"files/{id}"
+    link = f"filedata?fileId={id}"
+
+    with open(download_name, 'wb') as f:
         f.write(file)
+    os.symlink(download_name, link)
+    return link
 
 
 @app.route('/', methods=['GET'])
@@ -107,10 +113,11 @@ def file():
         fileData = flask.request.files['file'].read()
 
         url = "/localfile?fileId=" + str(id)
-        summary = base64.b64encode(str.encode(summarize(id, fileType)))
+
+        download_name = download_file(id, fileData, fileName)
+        summary = base64.b64encode(str.encode(summarize(fileType, download_name)))
         entry = (id, uploadTime, fileType, fileName, url, summary)
 
-        download_file(id, fileData)
         insert_file(entry)
 
         return json.dumps({"fileId": str(id)})
@@ -125,7 +132,7 @@ def file():
 
 @app.route('/filedata', methods=['GET'])
 @cross_origin()
-def localfile():
+def filedata():
     """
     Route for retrieving a file from local storage.
 
@@ -136,7 +143,8 @@ def localfile():
         file: the file to be retrieved
     """
     id = flask.request.args.get('fileId')
-    file = send_from_directory('files', id)
+    fileName = find_filename(id)
+    file = send_from_directory('files', id, as_attachment=True, download_name=fileName)
     return file
 
 
@@ -162,6 +170,7 @@ def files():
         return file_ids()
     else:
         delete_all()
+        os.system('rm -rf files/*')
         return "200 OK"
 
 
