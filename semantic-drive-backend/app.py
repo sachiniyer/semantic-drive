@@ -45,11 +45,11 @@ def download_file(id, file, fileName):
     """
     extension = fileName.split('.')[-1]
     download_name = f"files/{id}"
-    link = f"filedata?fileId={id}"
+    link = f"files/{id}.{extension}"
 
     with open(download_name, 'wb') as f:
         f.write(file)
-    os.symlink(download_name, link)
+    os.symlink(str(id), link)
     return link
 
 
