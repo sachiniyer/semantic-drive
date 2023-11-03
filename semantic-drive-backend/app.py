@@ -9,10 +9,13 @@ It contains the following routes:
     - /localfile: GET request for retrieving a file from local storage
     - /deleteall: DELETE request for deleting all files from the database
 """
-import flask
+# flake8: noqa E402
 from dotenv import load_dotenv
+load_dotenv()
+import flask
 from flask import send_from_directory
-from db import file_ids, insert_file, find_file, delete_all, file_summaries
+from db import (file_ids, insert_file, find_file,
+                delete_all, file_summaries, delete_file)
 from flask_cors import cross_origin
 import uuid
 import json
@@ -52,7 +55,7 @@ def download_file(id, file):
         f.write(file)
 
 
-@app.route('/file', methods=['GET', 'POST'])
+@app.route('/file', methods=['GET', 'POST', 'DELETE'])
 @cross_origin()
 def file():
     """
@@ -94,13 +97,15 @@ def file():
 
         summary = base64.b64encode(str.encode(summarize(id, fileType)))
 
-        entry = {'id': id, 'uploadTime': uploadTime,
-                 'fileType': fileType, 'fileName': fileName,
-                 'fileURL': url, 'summary': summary}
-
+        entry = (id, uploadTime, fileType, fileName, url, summary)
         insert_file(entry)
 
         return json.dumps({"fileId": str(id)})
+
+    elif flask.request.method == 'DELETE':
+        id = flask.request.form['fileId']
+        delete_file(id)
+        return "200 OK"
 
 
 @app.route('/search', methods=['GET'])
@@ -181,5 +186,4 @@ def deleteall():
 
 
 if __name__ == '__main__':
-    load_dotenv()
     app.run(host='0.0.0.0', port=8000, debug=True)

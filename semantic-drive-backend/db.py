@@ -12,7 +12,7 @@ This module contains the functions for interacting with the database
 """
 
 import psycopg2
-import logging
+import psycopg2.extras
 import os
 
 
@@ -25,21 +25,29 @@ def init_db():
     Returns:
         None
     """
-    global conn
+    psycopg2.extras.register_uuid()
     with conn.cursor() as cur:
         cur.execute(
             f'''
-            CREATE TABLE IF NOT EXISTS {os.getenv('DBNAME')}(
-            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            uploadTime   VARCHAR(50),
-            fileType     VARCHAR(50),
-            fileName     VARCHAR(300),
-            fileURL      VARCHAR(200),
-            summary BYTEA
-            );
-            '''
+             CREATE TABLE IF NOT EXISTS {os.getenv('TBNAME')} (
+             id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+             uploadTime   VARCHAR(50) DEFAULT '2021-01-01 00:00:00',
+             fileType     VARCHAR(50) DEFAULT 'text',
+             fileName     VARCHAR(300) DEFAULT 'file.txt',
+             fileURL      VARCHAR(200) DEFAULT NULL,
+             summary      BYTEA DEFAULT NULL
+             );
+             '''
         )
     conn.commit()
+
+
+conn = psycopg2.connect(dbname=os.getenv("DBNAME"),
+                        user=os.getenv("DBUSERNAME"),
+                        password=os.getenv("DBPASSWORD"),
+                        host=os.getenv("DBHOSTNAME"),
+                        port=os.getenv("DBPORT"))
+init_db()
 
 
 def insert_file(entry):
@@ -51,17 +59,13 @@ def insert_file(entry):
     Returns:
         None
     """
-    global conn
     with conn.cursor() as cur:
-       cur.execute(
-           f'''
-           UPSERT INTO db
-           (id, uploadTime, fileType, fileName, fileURL, summary)
-           VALUES ('{entry['id']}','{entry['uploadTime']}',
-           '{entry['fileType']}','{entry['fileName']}',
-           '{entry['fileURL']}',{entry['summary']})
-           '''
-       )
+        insert_query = f'''
+                        INSERT INTO {os.getenv('TBNAME')}
+                        (id, uploadTime, fileType, fileName, fileURL, summary)
+                        VALUES (%s,%s,%s,%s,%s,%s);
+                        '''
+        cur.execute(insert_query, entry)
     conn.commit()
 
 
@@ -74,11 +78,10 @@ def file_ids():
     Returns:
         id_values (list): the list of file ids
     """
-    global conn
     with conn.cursor() as cur:
-       cur.execute(f"SELECT id FROM {os.getenv('DBNAME')}"),
-       id_values = [result[0] for result in cur.fetchall()]
-    conn.commit()
+        cur.execute(f"SELECT id FROM {os.getenv('TBNAME')}"),
+        id_values = [result[0] for result in cur.fetchall()]
+        conn.commit()
     return id_values
 
 
@@ -91,9 +94,8 @@ def file_summaries():
     Returns:
         id_values (list): the list of file summaries
     """
-    global conn
     with conn.cursor() as cur:
-        cur.execute(f"SELECT id, summary FROM {os.getenv('DBNAME')}"),
+        cur.execute(f"SELECT id, summary FROM {os.getenv('TBNAME')}"),
         id_values = cur.fetchall()
     conn.commit()
     return id_values
@@ -108,9 +110,8 @@ def find_file(id):
     Returns:
         result (tuple): the file data
     """
-    global conn
     with conn.cursor() as cur:
-       cur.execute(f"SELECT * FROM {os.getenv('DBNAME')} WHERE id='{id}'"),
+       cur.execute(f"SELECT * FROM {os.getenv('TBNAME')} WHERE id='{id}'"),
        result = cur.fetchone()
     conn.commit()
     return result
@@ -125,9 +126,8 @@ def delete_file(id):
     Returns:
         None
     """
-    global conn
     with conn.cursor() as cur:
-       cur.execute(f"DELETE FROM {os.getenv('DBNAME')} WHERE id='{id}'"),
+       cur.execute(f"DELETE FROM {os.getenv('TBNAME')} WHERE id='{id}'"),
     conn.commit()
 
 
@@ -141,27 +141,6 @@ def delete_all():
         None
     """
     with conn.cursor() as cur:
-       cur.execute(f"DROP TABLE IF EXISTS {os.getenv('DBNAME')}"),
+       cur.execute(f"DROP TABLE IF EXISTS {os.getenv('TBNAME')}"),
     conn.commit()
-
-
-def init():
-    """
-    Initialize the database.
-
-    Args:
-        None
-    Returns:
-        None
-    """
-    global conn
-    conn = psycopg2.connect(dbname=os.getenv("DBNAME"),
-                            user=os.getenv("DBUSERNAME"),
-                            password=os.getenv("DBPASSWORD"),
-                            host=os.getenv("DBHOSTNAME"),
-                            port=os.getenv("DBPORT"))
     init_db()
-
-
-if __name__ == '__main__':
-    init()

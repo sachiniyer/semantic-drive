@@ -78,12 +78,11 @@ def summarize(id, fileType):
     Returns:
         summary (str): the summary of the file
     """
-    match fileType:
-        case "text":
-            return summarize_text(id)
-        case "image":
-            return summarize_image(id)
-        case "audio":
-            return summarize_audio(id)
-        case _:
-            return "File type not supported"
+    if fileType == "text":
+        return summarize_text(id)
+    elif fileType == "image":
+        return summarize_image(id)
+    elif fileType == "audio":
+        return summarize_audio(id)
+    else:
+        return "File type not supported"
