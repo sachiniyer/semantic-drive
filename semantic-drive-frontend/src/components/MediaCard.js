@@ -19,8 +19,6 @@ export default function MediaCard({ image, heading, text, id, displayFile }) {
           component="img"
           alt="Random image"
           image={image}
-          width={640}
-          height={480}
           style={{
             maxWidth: "100%",
             height: "200px",

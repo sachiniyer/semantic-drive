@@ -6,7 +6,7 @@ export default function ListCard({ image, heading, text, id, displayFile }) {
     displayFile(id);
   }
   return (
-    <ListItem onClick={handleClick}>
+    <ListItem button onClick={handleClick} sx={{ "width": "70vw" }}>
       <ListItemAvatar>
         <Avatar alt="file image" src={image} />
       </ListItemAvatar>
