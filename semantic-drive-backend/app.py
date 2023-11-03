@@ -173,22 +173,12 @@ def search():
     Returns:
         json: the ids of the files that match the search terms
     """
-    headers = {"Authorization": f"Bearer {os.getenv('HF_TOKEN')}"}
 
     terms = flask.request.args.get('terms')
-
-    def send(payload):
-        response = requests.post(API_URL, headers=headers, json=payload)
-        return response.json()
-
     summaries = file_summaries()
     ids = [summary[0] for summary in summaries]
     summaries = [base64.b64decode(bytes(summary[1])).decode('utf-8')
                  for summary in summaries]
-    data = send({"inputs": {
-        "source_sentence": terms,
-        "sentences": summaries
-    }})
     threshold = 0.3
     res = [ids[i] for i in range(len(data)) if data[i] > threshold]
     return json.dumps({"fileIds": res})
