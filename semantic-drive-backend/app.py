@@ -11,14 +11,19 @@ It contains the following routes:
 # flake8: noqa E402
 from dotenv import load_dotenv
 import logging
+import os
+
 load_dotenv()
-logging.basicConfig(level=logging.INFO)
+log_level = os.getenv('LOG_LEVEL', 'INFO')
+log_level = getattr(logging, log_level.upper())
+logger = logging.getLogger()
+logging.basicConfig(level=log_level)
+
 import flask
 from flask import send_from_directory
 from flask_cors import cross_origin
 import uuid
 import json
-import os
 import base64
 from db import (file_ids, insert_file, find_file,
                 delete_all, file_summaries, delete_file)
@@ -179,4 +184,6 @@ def search():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host=os.getenv("BIND_IP", "127.0.0.1"),
+            port=int(os.getenv("PORT", "8000")),
+            debug=(log_level == logging.DEBUG))
