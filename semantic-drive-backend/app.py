@@ -25,9 +25,6 @@ import base64
 
 app = flask.Flask(__name__)
 
-API_URL = ("https://api-inference.huggingface.co/models"
-           "/sentence-transformers/all-MiniLM-L6-v2")
-
 
 def download_file(id, file):
     """
