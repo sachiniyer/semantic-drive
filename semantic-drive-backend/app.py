@@ -28,7 +28,7 @@ logging.basicConfig(level=log_level)
 from summary import summarize
 from search import match
 from db import (file_ids, insert_file, find_file,
-                delete_all, file_summaries, delete_file)
+                delete_all, file_summaries_iter, delete_file)
 
 app = flask.Flask(__name__)
 
@@ -178,7 +178,7 @@ def search():
         json: the ids of the files that match the search terms
     """
     terms = flask.request.args.get('terms')
-    summaries = file_summaries()
+    summaries = file_summaries_iter()
     results = match(summaries, terms)
     return json.dumps({"fileIds": results})
 

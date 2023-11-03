@@ -84,23 +84,7 @@ def file_ids():
     return id_values
 
 
-def file_summaries():
-    """
-    Get file summaries.
-
-    Args:
-        None
-    Returns:
-        id_values (list): the list of file summaries
-    """
-    with conn.cursor() as cur:
-        cur.execute(f"SELECT id, summary FROM {os.getenv('TBNAME')}"),
-        id_values = cur.fetchall()
-    conn.commit()
-    return id_values
-
-
-def file_summaries_iiter():
+def file_summaries_iter():
     """
     Get file summaries with a server side cursor.
 
