@@ -23,7 +23,6 @@ def match(summaries, terms):
     """
     result = []
     term_emb = model.encode(terms, convert_to_tensor=True)
-    print(summaries)
     for summary in summaries:
         sumdata = base64.b64decode(bytes(summary[1])).decode('utf-8')
         sumdata_emb = model.encode(sumdata, convert_to_tensor=True)
