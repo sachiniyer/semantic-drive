@@ -2,7 +2,7 @@
 DB module for the project.
 
 This module contains the functions for interacting with the database
-- info: create the table if it does not exist
+- init_tb: create the table if it does not exist
 - insert_file: insert a file into the database
 - file_ids: get all file ids
 - file_summaries: get all file summaries
@@ -16,7 +16,7 @@ import psycopg2.extras
 import os
 
 
-def init_db():
+def init_tb():
     """
     Create the table if it does not exist.
 
@@ -47,7 +47,7 @@ conn = psycopg2.connect(dbname=os.getenv("DBNAME"),
                         password=os.getenv("DBPASSWORD"),
                         host=os.getenv("DBHOSTNAME"),
                         port=os.getenv("DBPORT"))
-init_db()
+init_tb()
 
 
 def insert_file(entry):
@@ -143,4 +143,4 @@ def delete_all():
     with conn.cursor() as cur:
        cur.execute(f"DROP TABLE IF EXISTS {os.getenv('TBNAME')}"),
     conn.commit()
-    init_db()
+    init_tb()
