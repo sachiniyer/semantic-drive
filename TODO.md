@@ -1,6 +1,6 @@
 # TODO
 
-- [ ] migrate to self hosted postgres
+- [x] migrate to self hosted postgres
 - [ ] verify functionality of server
 - [ ] fix icons on frontend
 - [ ] fix buttons on the frontend
