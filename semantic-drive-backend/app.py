@@ -11,10 +11,12 @@ It contains the following routes:
 # flake8: noqa E402
 from dotenv import load_dotenv
 load_dotenv()
+print("loading models")
 import flask
 from flask import send_from_directory
 from db import (file_ids, insert_file, find_file,
                 delete_all, file_summaries, delete_file)
+from search import match
 from flask_cors import cross_origin
 import uuid
 import json
@@ -170,15 +172,10 @@ def search():
     Returns:
         json: the ids of the files that match the search terms
     """
-
     terms = flask.request.args.get('terms')
     summaries = file_summaries()
-    ids = [summary[0] for summary in summaries]
-    summaries = [base64.b64decode(bytes(summary[1])).decode('utf-8')
-                 for summary in summaries]
-    threshold = 0.3
-    res = [ids[i] for i in range(len(data)) if data[i] > threshold]
-    return json.dumps({"fileIds": res})
+    results = match(summaries, terms)
+    return json.dumps({"fileIds": results})
 
 
 if __name__ == '__main__':

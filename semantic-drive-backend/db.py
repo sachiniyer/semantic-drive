@@ -81,7 +81,6 @@ def file_ids():
     with conn.cursor() as cur:
         cur.execute(f"SELECT id FROM {os.getenv('TBNAME')}"),
         id_values = [result[0] for result in cur.fetchall()]
-        conn.commit()
     return id_values
 
 
@@ -101,6 +100,23 @@ def file_summaries():
     return id_values
 
 
+def file_summaries_iiter():
+    """
+    Get file summaries with a server side cursor.
+
+    Args:
+        None
+    Returns:
+        id_values (iter): the iter of file summaries
+    """
+    with conn.cursor(name='file_summaries',
+                     cursor_factory=psycopg2.extras.DictCursor) as cur:
+        cur.execute(f"SELECT id, summary FROM {os.getenv('TBNAME')}"),
+        for row in cur:
+            yield row
+        cur.close()
+
+
 def find_file(id):
     """
     Find a file in the database.
@@ -113,7 +129,6 @@ def find_file(id):
     with conn.cursor() as cur:
        cur.execute(f"SELECT * FROM {os.getenv('TBNAME')} WHERE id='{id}'"),
        result = cur.fetchone()
-    conn.commit()
     return result
 
 
