@@ -2,12 +2,14 @@
 
 - [x] migrate to self hosted postgres
 - [x] change search function to not depend on huggingface api
-  - Iterate through sentances using server side cursor
+  - Iterate through sentences using server side cursor
   - for an initial model (should be improved later):
     - compute embeddings of the words
     - check cosine similarity
     - return the top results above a threshold
 - [x] verify functionality of server
-- [ ] fix icons on frontend
+- [x] fix icons on frontend
 - [ ] fix buttons on the frontend
+- [ ] fix search on the frontend
 - [ ] dockerize and deploy frontend
+- [ ] test memory usage of backend

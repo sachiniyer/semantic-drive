@@ -90,7 +90,7 @@ def file():
         str: 200 OK response
     """
     if flask.request.method == 'GET':
-        response = find_file(flask.request.form['fileId'])
+        response = find_file(flask.request.args.get('fileId'))
 
         return json.dumps({
             "uploadTime": response[1],

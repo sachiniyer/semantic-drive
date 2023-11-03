@@ -38,14 +38,10 @@ export default function HomePage() {
       setFileId(0);
     } else {
       setFileId(newId);
-      const formData = new FormData();
-      formData.append("fileId", newId);
-      fetch(`${API}/file`, {
-        method: "POST",
-        body: formData
+      fetch(`${API}/file?fileId=${newId}`, {
+        method: "GET",
       }).then(response => response.json())
         .then(data => {
-          console.log(data);
           setDisplayFileContent(
             <Drawer
               sx={{

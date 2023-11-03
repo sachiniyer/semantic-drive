@@ -13,24 +13,22 @@ export default function FileList({ displayFile }) {
     let newItems = [];
     let futures = [];
     for (let f of files) {
-      const formData = new FormData();
-      formData.append("fileId", f);
-      futures.push(fetch(`${API}/file`, {
-        method: "POST",
-        body: formData,
+      futures.push(fetch(`${API}/file?fileId=${f}`, {
+        method: "GET",
       })
         .then(response => response.json())
-        .then(data => { 
+        .then(data => {
           return (
-          <ListCard
-            image="https://source.unsplash.com/random"
-            heading={data.fileName}
-            text={data.summary}
-            id={f}
-            displayFile={displayFile}
-          />
+            <ListCard
+              image="https://source.unsplash.com/random"
+              heading={data.fileName}
+              text={data.summary}
+              id={f}
+              displayFile={displayFile}
+            />
           )
-        }))};
+        }))
+    };
     Promise.all(futures).then((data) => {
       console.log(data)
       setItems(data)

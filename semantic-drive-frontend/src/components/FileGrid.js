@@ -9,19 +9,13 @@ export default function FileGrid({ displayFile }) {
   let [items, setItems] = useState([]);
   let [files, _] = useContext(FilesContext)
   useEffect(() => {
-    console.log(files)
     let futures = [];
     for (let f of files) {
-      const formData = new FormData();
-      formData.append("fileId", f);
-      futures.push(fetch(`${API}/file`, {
-        method: "POST",
-        body: formData,
+      futures.push(fetch(`${API}/file?fileId=${f}`, {
+        method: "GET",
       })
         .then(response => response.json())
         .then(data => {
-          // console.log(data)
-          // newItems.push(
           return (
             <Grid key={f}>
               <MediaCard
@@ -33,9 +27,9 @@ export default function FileGrid({ displayFile }) {
               />
             </Grid>,
           );
-        }))}
+        }))
+    }
     Promise.all(futures).then((data) => {
-      console.log(data)
       setItems(data)
     });
   }, [files]);
