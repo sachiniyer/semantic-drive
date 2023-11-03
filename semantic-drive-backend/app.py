@@ -10,20 +10,20 @@ It contains the following routes:
 """
 # flake8: noqa E402
 from dotenv import load_dotenv
+import logging
 load_dotenv()
-print("loading models")
+logging.basicConfig(level=logging.INFO)
 import flask
 from flask import send_from_directory
-from db import (file_ids, insert_file, find_file,
-                delete_all, file_summaries, delete_file)
-from search import match
 from flask_cors import cross_origin
 import uuid
 import json
-import requests
 import os
-from summary import summarize
 import base64
+from db import (file_ids, insert_file, find_file,
+                delete_all, file_summaries, delete_file)
+from search import match
+from summary import summarize
 
 app = flask.Flask(__name__)
 

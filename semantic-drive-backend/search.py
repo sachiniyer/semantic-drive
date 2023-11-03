@@ -2,6 +2,7 @@
 Search module for the project.
 
 This module contains the functions for searching the database
+- match: compare the search terms with the file summaries
 """
 import base64
 import os
