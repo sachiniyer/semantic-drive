@@ -14,6 +14,7 @@ This module contains the functions for interacting with the database
 import psycopg2
 import psycopg2.extras
 import os
+import logging
 
 
 def init_tb():
@@ -27,19 +28,26 @@ def init_tb():
     """
     psycopg2.extras.register_uuid()
     with conn.cursor() as cur:
-        cur.execute(
-            f'''
-             CREATE TABLE IF NOT EXISTS {os.getenv('TBNAME')} (
-             id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-             uploadTime   VARCHAR(50) DEFAULT '2021-01-01 00:00:00',
-             fileType     VARCHAR(50) DEFAULT 'text',
-             fileName     VARCHAR(300) DEFAULT 'file.txt',
-             fileURL      VARCHAR(200) DEFAULT NULL,
-             summary      BYTEA DEFAULT NULL
-             );
-             '''
-        )
-    conn.commit()
+        try:
+            cur.execute(
+                f'''
+                 CREATE TABLE IF NOT EXISTS {os.getenv('TBNAME')} (
+                 id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                 uploadTime   VARCHAR(50) DEFAULT '2021-01-01 00:00:00',
+                 fileType     VARCHAR(50) DEFAULT 'text',
+                 fileName     VARCHAR(300) DEFAULT 'file.txt',
+                 fileURL      VARCHAR(200) DEFAULT NULL,
+                 summary      BYTEA DEFAULT NULL
+                 );
+                 '''
+            )
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            logger = logging.getLogger(__name__)
+            logger.error(e)
+        finally:
+            cur.close()
 
 
 conn = psycopg2.connect(dbname=os.getenv("DBNAME"),
@@ -60,13 +68,21 @@ def insert_file(entry):
         None
     """
     with conn.cursor() as cur:
-        insert_query = f'''
-                        INSERT INTO {os.getenv('TBNAME')}
-                        (id, uploadTime, fileType, fileName, fileURL, summary)
-                        VALUES (%s,%s,%s,%s,%s,%s);
-                        '''
-        cur.execute(insert_query, entry)
-    conn.commit()
+        try:
+            insert_query = f'''
+                            INSERT INTO {os.getenv('TBNAME')}
+                            (id, uploadTime, fileType,
+                             fileName, fileURL, summary)
+                            VALUES (%s,%s,%s,%s,%s,%s);
+                            '''
+            cur.execute(insert_query, entry)
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            logger = logging.getLogger(__name__)
+            logger.error(e)
+        finally:
+            cur.close()
 
 
 def file_ids():
@@ -79,9 +95,15 @@ def file_ids():
         id_values (list): the list of file ids
     """
     with conn.cursor() as cur:
-        cur.execute(f"SELECT id FROM {os.getenv('TBNAME')}"),
-        id_values = [result[0] for result in cur.fetchall()]
-    return id_values
+        try:
+            cur.execute(f"SELECT id FROM {os.getenv('TBNAME')}"),
+            id_values = [result[0] for result in cur.fetchall()]
+            return id_values
+        except Exception as e:
+            logger = logging.getLogger(__name__)
+            logger.error(e)
+        finally:
+            cur.close()
 
 
 def file_summaries_iter():
@@ -95,10 +117,15 @@ def file_summaries_iter():
     """
     with conn.cursor(name='file_summaries',
                      cursor_factory=psycopg2.extras.DictCursor) as cur:
-        cur.execute(f"SELECT id, summary FROM {os.getenv('TBNAME')}"),
-        for row in cur:
-            yield row
-        cur.close()
+        try:
+            cur.execute(f"SELECT id, summary FROM {os.getenv('TBNAME')}"),
+            for row in cur:
+                yield row
+        except Exception as e:
+            logger = logging.getLogger(__name__)
+            logger.error(e)
+        finally:
+            cur.close()
 
 
 def find_file(id):
@@ -111,9 +138,15 @@ def find_file(id):
         result (tuple): the file data
     """
     with conn.cursor() as cur:
-        cur.execute(f"SELECT * FROM {os.getenv('TBNAME')} WHERE id='{id}'"),
-        result = cur.fetchone()
-    return result
+        try:
+            cur.execute(f"SELECT * FROM {os.getenv('TBNAME')} WHERE id='{id}'")
+            result = cur.fetchone()
+            return result
+        except Exception as e:
+            logger = logging.getLogger(__name__)
+            logger.error(e)
+        finally:
+            cur.close()
 
 
 def find_filename(id):
@@ -126,10 +159,16 @@ def find_filename(id):
         result (str): the file name
     """
     with conn.cursor() as cur:
-        cur.execute(f"SELECT fileName "
-                    f"FROM {os.getenv('TBNAME')} WHERE id='{id}'"),
-        result = cur.fetchone()
-    return result[0]
+        try:
+            cur.execute(f"SELECT fileName "
+                        f"FROM {os.getenv('TBNAME')} WHERE id='{id}'"),
+            result = cur.fetchone()
+            return result[0]
+        except Exception as e:
+            logger = logging.getLogger(__name__)
+            logger.error(e)
+        finally:
+            cur.close()
 
 
 def delete_file(id):
@@ -142,8 +181,15 @@ def delete_file(id):
         None
     """
     with conn.cursor() as cur:
-        cur.execute(f"DELETE FROM {os.getenv('TBNAME')} WHERE id='{id}'"),
-    conn.commit()
+        try:
+            cur.execute(f"DELETE FROM {os.getenv('TBNAME')} WHERE id='{id}'"),
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            logger = logging.getLogger(__name__)
+            logger.error(e)
+        finally:
+            cur.close()
 
 
 def delete_all():
@@ -156,6 +202,13 @@ def delete_all():
         None
     """
     with conn.cursor() as cur:
-        cur.execute(f"DROP TABLE IF EXISTS {os.getenv('TBNAME')}"),
-    conn.commit()
+        try:
+            cur.execute(f"DROP TABLE IF EXISTS {os.getenv('TBNAME')}"),
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            logger = logging.getLogger(__name__)
+            logger.error(e)
+        finally:
+            cur.close()
     init_tb()
