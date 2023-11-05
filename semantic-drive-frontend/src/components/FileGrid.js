@@ -17,14 +17,8 @@ export default function FileGrid({ displayFile }) {
         .then(response => response.json())
         .then(data => {
           let image = `${API}${data.file}`
-          if (data.fileType == "audio") {
-            image = '/audio.jpg'
-          }
-          else if (data.fileType == "text") {
-            image = '/text.png'
-          }
-          if (data.fileType == "video") {
-            image = '/video.png'
+          if (data.fileType != "image") {
+            image = `/${data.fileType}.jpg`
           }
           return (
             <Grid key={f}>
