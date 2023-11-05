@@ -4,7 +4,7 @@ A drive with intelligent semantic searching.
 
 For example, when you search for dog, it will bring up pictures, audios, texts... that contain dog.
 
-Built during Calhacks 10.0 (2023)
+Built (mostly) during Calhacks 10.0 (2023)
 
 ## Components
 
