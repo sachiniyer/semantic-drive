@@ -18,9 +18,13 @@ export default function FileList({ displayFile }) {
       })
         .then(response => response.json())
         .then(data => {
+          let image = `${API}${data.file}`
+          if (data.fileType != "image") {
+            image = `/${data.fileType}.png`
+          }
           return (
             <ListCard
-              image="https://source.unsplash.com/random"
+              image={image}
               heading={data.fileName}
               text={data.summary}
               id={f}

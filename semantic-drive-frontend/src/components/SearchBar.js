@@ -12,6 +12,7 @@ import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import Divider from "@mui/material/Divider";
 import { LayoutContext, FilesContext } from "@/components/Contexts";
 import { useContext } from "react";
+import { API } from "@/components/Consts";
 
 export default function SearchBar({ drawerWidth }) {
   let [layout, setLayout] = useContext(LayoutContext);
@@ -23,6 +24,25 @@ export default function SearchBar({ drawerWidth }) {
       console.log(layout);
     } else {
       setLayout("grid");
+    }
+  }
+
+  async function getSearchResults() {
+    let terms = document.querySelector("input").value;
+    if (terms == "") {
+      fetch(`${API}/files`
+      ).then(response => response.json())
+        .then(data => {
+          setFiles(data);
+        });
+    }
+    else {
+      fetch(`${API}/search?terms=${terms}`
+      ).then(response => response.json())
+        .then(data => {
+          setFiles(data.fileIds);
+        });
+
     }
   }
 
@@ -47,12 +67,17 @@ export default function SearchBar({ drawerWidth }) {
           sx={{ ml: 1, flex: 1 }}
           placeholder="Search Drive"
           inputProps={{ "aria-label": "search the drive" }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              getSearchResults();
+            }
+          }}
         />
         <IconButton
           type="search"
           sx={{ p: "10px" }}
           aria-label="order"
-          onClick={changeOrderType}
+          onClick={getSearchResults}
         >
           <SearchIcon />
         </IconButton>

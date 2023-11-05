@@ -7,6 +7,11 @@ This module contains the functions for summarizing the files
 """
 from transformers import pipeline
 
+summarizer = pipeline("summarization", model="t5-small")
+pipe = pipeline("automatic-speech-recognition", "openai/whisper-small")
+captioner = pipeline("image-to-text",
+                     model="Salesforce/blip-image-captioning-base")
+
 
 def read_file(downloadName):
     """
@@ -31,7 +36,6 @@ def summarize_text(downloadName):
     Returns:
         summary (str): the summary of the file
     """
-    summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
     summarizer_text = summarizer(read_file(downloadName).decode('utf-8'),
                                  max_length=100, do_sample=False)
     return summarizer_text[0]['summary_text']
@@ -46,8 +50,6 @@ def summarize_image(downloadName):
     Returns:
         summary (str): the summary of the file
     """
-    captioner = pipeline("image-to-text",
-                         model="Salesforce/blip-image-captioning-base")
     captioner_text = captioner(downloadName)
     return captioner_text[0]['generated_text']
 
@@ -61,9 +63,7 @@ def summarize_audio(downloadName):
     Returns:
         summary (str): the summary of the file
     """
-    pipe = pipeline("automatic-speech-recognition", "openai/whisper-small")
     ext_text = pipe(downloadName)['text']
-    summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
     summarizer_text = summarizer(ext_text, max_length=100, do_sample=False)
     return summarizer_text[0]['summary_text']
 

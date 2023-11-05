@@ -18,7 +18,7 @@ export default function FileGrid({ displayFile }) {
         .then(data => {
           let image = `${API}${data.file}`
           if (data.fileType != "image") {
-            image = `/${data.fileType}.jpg`
+            image = `/${data.fileType}.png`
           }
           return (
             <Grid key={f}>

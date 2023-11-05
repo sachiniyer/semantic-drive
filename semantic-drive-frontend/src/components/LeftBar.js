@@ -1,5 +1,5 @@
 "use client"
-import { useContext, useRef } from "react";
+import { useContext, useRef, useState } from "react";
 import { FileIdContext, FilesContext } from "@/components/Contexts";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -11,12 +11,14 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import DeleteIcon from '@mui/icons-material/Delete'
+import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import { API, IMAGE_TYPES, AUDIO_TYPES, VIDEO_TYPES } from "@/components/Consts"
 
 export default function LeftBar() {
   let [files, setFiles] = useContext(FilesContext);
   let [fileId, _setFileId] = useContext(FileIdContext);
+  let [loading, setLoading] = useState(<></>);
   const fileInputRef = useRef(null);
 
   const handleCustomButtonClick = () => {
@@ -24,6 +26,11 @@ export default function LeftBar() {
   };
 
   const handleFileChange = async (e) => {
+    setLoading(
+      <Typography variant="h6" noWrap component="div" sx={{ pr: 5 }}>
+        Uploading...
+      </Typography>
+    );
     let fileName = e.target.files[0].name;
     let uploadTime = new Date().toISOString();
     let file = e.target.files[0];
@@ -50,6 +57,7 @@ export default function LeftBar() {
       .then(data => {
         let fileId = data.fileId;
         setFiles([...files, fileId])
+        setLoading(<></>);
       });
   };
 
@@ -122,6 +130,7 @@ export default function LeftBar() {
           </ListItemButton>
         </ListItem>
       </List>
+      {loading}
 
       <Divider sx={{ mt: "auto" }} />
       <List>

@@ -13,4 +13,4 @@
 - [x] dockerize and deploy frontend
 - [x] test memory usage of backend
 - [x] make custom icons
-- [ ] fix search on the frontend
+- [x] fix search on the frontend
