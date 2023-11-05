@@ -1,5 +1,5 @@
 "use client"
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef } from "react";
 import { FileIdContext, FilesContext } from "@/components/Contexts";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -12,8 +12,7 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import DeleteIcon from '@mui/icons-material/Delete'
 import Divider from "@mui/material/Divider";
-import { redirect } from "next/navigation";
-import { API } from "@/components/Consts"
+import { API, IMAGE_TYPES, AUDIO_TYPES, VIDEO_TYPES } from "@/components/Consts"
 
 export default function LeftBar() {
   let [files, setFiles] = useContext(FilesContext);
@@ -25,14 +24,42 @@ export default function LeftBar() {
   };
 
   const handleFileChange = async (e) => {
-
+    let fileName = e.target.files[0].name;
+    let uploadTime = new Date().toISOString();
+    let file = e.target.files[0];
+    let extension = fileName.split('.').pop();
+    let fileType = "text";
+    if (IMAGE_TYPES.includes(extension)) {
+      fileType = "image"
+    }
+    else if (AUDIO_TYPES.includes(extension)) {
+      fileType = "audio"
+    }
+    else if (VIDEO_TYPES.includes(extension)) {
+      fileType = "video"
+    }
+    let formData = new FormData();
+    formData.append("file", file);
+    formData.append("fileName", fileName);
+    formData.append("fileType", fileType);
+    formData.append("uploadTime", uploadTime);
+    fetch(`${API}/file`, {
+      method: 'POST',
+      body: formData
+    }).then(response => response.json())
+      .then(data => {
+        let fileId = data.fileId;
+        setFiles([...files, fileId])
+      });
   };
 
 
   function homeButton() {
-  }
-
-  async function downloadButton() {
+    fetch(`${API}/files`)
+      .then(response => response.json())
+      .then(data => {
+        setFiles(data)
+      });
   }
 
   async function uploadButton() {
@@ -40,7 +67,12 @@ export default function LeftBar() {
   }
 
   function deleteButton() {
-    deleteFile(fileId)
+    let formData = new FormData();
+    formData.append("fileId", fileId);
+    fetch(`${API}/file`, {
+      method: 'DELETE',
+      body: formData
+    });
     setFiles(files.filter((f) => f != fileId))
   }
 
@@ -56,9 +88,9 @@ export default function LeftBar() {
           </ListItemButton>
         </ListItem>
 
-        <a href={`${API}/localfile?fileId=${fileId}`} style={{ textDecoration: "none", color: "inherit" }} target="_blank">
+        <a href={`${API}/filedata?fileId=${fileId}`} style={{ textDecoration: "none", color: "inherit" }} target="_blank">
           <ListItem key={"download"} disablePadding>
-            <ListItemButton onClick={downloadButton}>
+            <ListItemButton>
               <ListItemIcon>
                 <FileDownloadIcon />
               </ListItemIcon>
