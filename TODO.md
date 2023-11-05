@@ -11,5 +11,5 @@
 - [x] fix icons on frontend
 - [ ] fix buttons on the frontend
 - [ ] fix search on the frontend
-- [ ] dockerize and deploy frontend
-- [ ] test memory usage of backend
+- [x] dockerize and deploy frontend
+- [x] test memory usage of backend
