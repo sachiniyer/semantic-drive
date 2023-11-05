@@ -12,7 +12,6 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import DeleteIcon from '@mui/icons-material/Delete'
 import Divider from "@mui/material/Divider";
-import { uploadFile, downloadFile, deleteFile, getFiles } from '@/app/api/routes'
 import { redirect } from "next/navigation";
 import { API } from "@/components/Consts"
 

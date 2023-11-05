@@ -20,7 +20,7 @@ import logging
 import os
 
 load_dotenv()
-log_level = os.getenv('LOG_LEVEL', 'INFO')
+log_level = os.getenv("LOG_LEVEL", "INFO")
 log_level = getattr(logging, log_level.upper())
 logger = logging.getLogger()
 logging.basicConfig(level=log_level)

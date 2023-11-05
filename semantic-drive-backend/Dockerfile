@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM python:3.10-slim-buster
+FROM --platform=$BUILDPLATFORM python:3.9-slim-buster
 
 RUN apt-get update && apt-get install -y \
     pkg-config \
@@ -7,16 +7,10 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 RUN python -m pip install --upgrade pip
 COPY requirements.txt /app
-RUN pip3 install -U flask \
-    flask_cors \
-    requests \
-    psycopg2-binary \
-    python-dotenv \
-    'transformers[torch]' \
-    pillow \
-    sentence_transformers
 
+RUN pip install -r requirements.txt
 COPY . /app
+RUN mkdir /app/files
 
 ENTRYPOINT ["python3"]
 CMD ["app.py"]
