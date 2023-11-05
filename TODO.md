@@ -9,7 +9,8 @@
     - return the top results above a threshold
 - [x] verify functionality of server
 - [x] fix icons on frontend
-- [ ] fix buttons on the frontend
-- [ ] fix search on the frontend
+- [x] fix buttons on the frontend
 - [x] dockerize and deploy frontend
 - [x] test memory usage of backend
+- [ ] fix search on the frontend
+- [ ] make custom icons
