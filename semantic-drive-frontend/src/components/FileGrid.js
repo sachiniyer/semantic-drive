@@ -16,10 +16,20 @@ export default function FileGrid({ displayFile }) {
       })
         .then(response => response.json())
         .then(data => {
+          let image = `${API}${data.file}`
+          if (data.fileType == "audio") {
+            image = '/audio.jpg'
+          }
+          else if (data.fileType == "text") {
+            image = '/text.png'
+          }
+          if (data.fileType == "video") {
+            image = '/video.png'
+          }
           return (
             <Grid key={f}>
               <MediaCard
-                image="https://source.unsplash.com/random"
+                image={image}
                 heading={data.fileName}
                 text={data.summary}
                 id={f}

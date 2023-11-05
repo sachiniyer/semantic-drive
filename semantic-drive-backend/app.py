@@ -112,7 +112,7 @@ def file():
         fileName = flask.request.form['fileName']
         fileData = flask.request.files['file'].read()
 
-        url = "/localfile?fileId=" + str(id)
+        url = "/filedata?fileId=" + str(id)
 
         download_name = download_file(id, fileData, fileName)
         summary = base64.b64encode(str.encode(summarize(fileType, download_name)))

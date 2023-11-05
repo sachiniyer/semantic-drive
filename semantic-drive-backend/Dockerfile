@@ -2,7 +2,8 @@ FROM --platform=$BUILDPLATFORM python:3.9-slim-buster
 
 RUN apt-get update && apt-get install -y \
     pkg-config \
-    cmake
+    cmake \
+    ffmpeg
 
 WORKDIR /app
 RUN python -m pip install --upgrade pip
